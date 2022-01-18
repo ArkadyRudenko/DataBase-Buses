@@ -23,13 +23,43 @@ void BaseBuses::AddBus(string bus, std::pair<std::vector<std::string>, Route> st
     buses.insert({bus, move(BusInfo(busInfoList, stops_list.second))}); // TODO move need???
 }
 
+void BaseBuses::GetInfoStop(const std::string &stop, ostream &os) {
+    auto it = find_if(stops.begin(), stops.end(), [&](const BusStop &stop_) {
+        return stop_.name == stop;
+    });
+    os << "Stop " << stop << ": ";
+    if (it == stops.end()) {
+        os << "not found\n";
+    } else {
+        set<string> buses_of_stop;
+        for (const auto &bus: buses) {
+            const auto &list_stops = bus.second.getListStops();
+            for (const auto &ptr_stop: list_stops) {
+                if (ptr_stop->name == stop) {
+                    buses_of_stop.insert(bus.first);
+                }
+            }
+        }
+        if (buses_of_stop.empty()) {
+            os << "no buses\n";
+        } else {
+            os << "buses ";
+            for (const auto &s: buses_of_stop) {
+                os << s << " ";
+            }
+            os << '\n';
+        }
+    }
+
+}
+
 
 void BaseBuses::AddStop(BusStop busStop) {
     stops.insert(std::move(busStop));
 }
 
 
-void BaseBuses::GetInfoBus(string bus, std::ostream &os) {
+void BaseBuses::GetInfoBus(const string &bus, std::ostream &os) {
     os << "Bus " << bus << ": ";
     auto it = buses.find(bus);
     if (it == buses.end()) {

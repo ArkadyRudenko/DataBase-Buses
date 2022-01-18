@@ -2,9 +2,8 @@
 
 namespace StateListening {
 
-    class GetBusInfo : public StateListen {
+    class GetStopInfo : public StateListen {
     public:
         void Listen(BaseBuses &buses, std::ostream &os, std::istream &is) override;
     };
-
 }

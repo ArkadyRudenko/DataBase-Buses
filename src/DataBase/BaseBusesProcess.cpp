@@ -1,6 +1,7 @@
 #include "BaseBusesProcess.h"
 #include "StateListen.h"
 #include "GetBusInfo.h"
+#include "GetStopInfo.h"
 
 using namespace std;
 using MapStates = unordered_map<string, shared_ptr<StateListen>>;
@@ -21,5 +22,6 @@ using namespace StateListening;
 MapStates CreateMapStates() {
     MapStates mapStates;
     mapStates.insert({"Bus", make_shared<GetBusInfo>()});
+    mapStates.insert({"Stop", make_shared<GetStopInfo>()});
     return mapStates;
 }

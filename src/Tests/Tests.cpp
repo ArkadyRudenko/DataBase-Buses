@@ -52,31 +52,6 @@ void SimpleOnDataBaseTest() {
     ASSERT_EQUAL(expected, realresult.str());
 }
 
-void ExceptionOnDataBaseTest() {
-    stringstream is;
-    is << "10\n"
-          "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
-          "Stop Marushkino: 55.595884, 37.209755\n"
-          "Bus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\n"
-          "Bus 750( Tolstopaltsevo - Marushkino - Rasskazovka\n"
-          "Stop Rasskazovka: 55.632761, 37.333324\n"
-          "Stop Biryulyovo Zapadnoye: 55.574371, 37.6517\n"
-          "Stop Biryusinka: 55.581065, 37.64839\n"
-          "Stop Universam: 55.587655, 37.645687\n"
-          "Stop Biryulyovo Tovarnaya: 55.592028, 37.653656\n"
-          "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
-          "3\n"
-          "Bus 256\n"
-          "Bus 750\n"
-          "Bus 751";
-    string expected = "Bus 256: 6 stops on route, 5 unique stops, 4371.02 route length\n"
-                      "Bus 750: not found\n"
-                      "Bus 751: not found\n";
-    stringstream real_result;
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    BaseBusesProcess(baseBuses, is, real_result);
-    ASSERT_EQUAL(expected, real_result.str());
-}
 
 void StringBusesOnDataBaseTest() {
     stringstream is;
@@ -105,7 +80,7 @@ void StringBusesOnDataBaseTest() {
 }
 
 
-void TestSameStopsBusesOnDataBaseTest() {
+void SameStopsBusesOnDataBaseTest() {
     stringstream is;
     is << "9\n"
           "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
@@ -119,16 +94,53 @@ void TestSameStopsBusesOnDataBaseTest() {
           "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
           "1\n"
           "Bus 100\n";
-    string expected = "Bus 100: 11 stops on route, 4 unique stops, 4371.02 route length\n";
+    string expected = "Bus 100: 11 stops on route, 4 unique stops, 121243 route length\n";
 
     stringstream real_result;
     BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
     BaseBusesProcess(baseBuses, is, real_result);
-//    ASSERT_EQUAL(expected, real_result.str());
+    ASSERT_EQUAL(expected, real_result.str());
 }
 
 
-void LongTestOnDataBase() {
+void CheckInfoStopsBusesOnDataBaseTest() {
+    stringstream is;
+    is << "13\n"
+          "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
+          "Stop Marushkino: 55.595884, 37.209755\n"
+          "Bus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\n"
+          "Bus 750: Tolstopaltsevo - Marushkino - Rasskazovka\n"
+          "Stop Rasskazovka: 55.632761, 37.333324\n"
+          "Stop Biryulyovo Zapadnoye: 55.574371, 37.6517\n"
+          "Stop Biryusinka: 55.581065, 37.64839\n"
+          "Stop Universam: 55.587655, 37.645687\n"
+          "Stop Biryulyovo Tovarnaya: 55.592028, 37.653656\n"
+          "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
+          "Bus 828: Biryulyovo Zapadnoye > Universam > Rossoshanskaya ulitsa > Biryulyovo Zapadnoye\n"
+          "Stop Rossoshanskaya ulitsa: 55.595579, 37.605757\n"
+          "Stop Prazhskaya: 55.611678, 37.603831\n"
+          "6\n"
+          "Bus 256\n"
+          "Bus 750\n"
+          "Bus 751\n"
+          "Stop Samara\n"
+          "Stop Prazhskaya\n"
+          "Stop Biryulyovo Zapadnoye\n";
+
+    string expected = "Bus 256: 6 stops on route, 5 unique stops, 4371.02 route length\n"
+                      "Bus 750: 5 stops on route, 3 unique stops, 20939.5 route length\n"
+                      "Bus 751: not found\n"
+                      "Stop Samara: not found\n"
+                      "Stop Prazhskaya: no buses\n"
+                      "Stop Biryulyovo Zapadnoye: buses 256 828 \n";
+
+    stringstream real_result;
+    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
+    BaseBusesProcess(baseBuses, is, real_result);
+    ASSERT_EQUAL(expected, real_result.str());
+}
+
+void LongOnDataBaseTest() {
     stringstream is;
     Generate(is);
     BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
@@ -144,10 +156,10 @@ void TestAll() {
     RUN_TEST(tr, SimpleOnReadStopWithTireTest);
     RUN_TEST(tr, SimpleOnDataBaseTest);
     RUN_TEST(tr, StringBusesOnDataBaseTest);
-    RUN_TEST(tr, TestSameStopsBusesOnDataBaseTest);
-//    RUN_TEST(tr, ExceptionTestOnDataBase);
+    RUN_TEST(tr, SameStopsBusesOnDataBaseTest);
+    RUN_TEST(tr, CheckInfoStopsBusesOnDataBaseTest);
     {
         LOG_DURATION("Long Test");
-        LongTestOnDataBase();
+        LongOnDataBaseTest();
     }
 }

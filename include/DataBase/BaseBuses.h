@@ -24,7 +24,8 @@ public:
 
     void AddStop(BusStop busStop);
 
-    void GetInfoBus(std::string bus, std::ostream &os);
+    void GetInfoBus(const std::string& bus, std::ostream &os);
+    void GetInfoStop(const std::string& stop, std::ostream &os);
 
 private:
     std::unordered_map<std::string, BusInfo> buses;
