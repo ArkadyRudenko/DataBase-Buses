@@ -1,10 +1,11 @@
 #include "GetBusInfo.h"
+#include "PasreRequests.h"
 
 namespace StateListening {
 
     void GetBusInfo::Listen(BaseBuses &buses, std::ostream &os, std::istream &is) {
-        int id_bus;
-        is >> id_bus;
-        buses.GetInfoBus(id_bus, os);
+        std::string id_bus;
+        getline(is, id_bus);
+        buses.GetInfoBus(RemoveSpaces(id_bus), os);
     }
 }

@@ -16,12 +16,4 @@ void AddStop::Execute(BaseBuses &buses, std::istream &is) {
     is.ignore(1);
     is >> longitude;
     buses.AddStop({name_stop, latitude, longitude});
-
-
-#ifdef TEST
-    cout << "Stop Name = "<< name_stop << "\n";
-    cout << "lat= " << latitude << "\n" <<
-    "long = " << longitude << "\n";
-#endif
-
 }

@@ -7,14 +7,6 @@
 
 #include "BusInfo.h"
 
-namespace rng = std::ranges;
-
-struct Bus {
-    int number;
-
-    explicit Bus(int v) : number(v) {}
-};
-
 struct CompareForBusStop {
     using is_transparent = void;  // Сделали компаратор прозрачным
 
@@ -28,14 +20,14 @@ struct CompareForBusStop {
 class BaseBuses {
 public:
 
-    void AddBus(int bus, std::vector<std::string> stops_list);
+    void AddBus(std::string bus, std::pair<std::vector<std::string>, Route> stops_list);
 
     void AddStop(BusStop busStop);
 
-    void GetInfoBus(int bus, std::ostream &os);
+    void GetInfoBus(std::string bus, std::ostream &os);
 
 private:
-    std::unordered_map<int, BusInfo> buses;
+    std::unordered_map<std::string, BusInfo> buses;
     std::set<BusStop, CompareForBusStop> stops;
 
     constexpr static const double PI = 3.1415926535;
@@ -44,5 +36,6 @@ private:
     static double calcLength(StopsList stopsList);
     static double calcLengthBetweenTwoStops(const BusStop* lhs, const BusStop* rhs);
     static double calcRadians(double);
+    static int calcUniqueStops(const StopsList& stopsList);
 };
 

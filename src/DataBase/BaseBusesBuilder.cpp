@@ -7,7 +7,7 @@
 #include "AddStop.h"
 
 using namespace std;
-namespace rng = std::ranges;
+//namespace rng = std::ranges;
 
 BaseBuses BaseBusesBuilder::BuildBase(std::istream &is) {
     BaseBuses baseBuses;
@@ -26,7 +26,8 @@ BaseBuses BaseBusesBuilder::BuildBase(std::istream &is) {
     for (int i = 0; i < all_commands.size(); i++) {
         commands_for_sorting[i] = all_commands[i];
     }
-    rng::partition(commands_for_sorting, [](const string_view str) {
+    // TODO rng
+    partition(commands_for_sorting.begin(), commands_for_sorting.end(), [](const string_view str) {
         return str.substr(0, 4) == "Stop";
     });
 
@@ -37,7 +38,7 @@ BaseBuses BaseBusesBuilder::BuildBase(std::istream &is) {
         string command;
         sorted_stream >> command;
         try {
-            commands.at(command)->Execute(baseBuses, sorted_stream);
+            commands.at(command)->Execute(baseBuses, sorted_stream); // TODO
         } catch (logic_error& error) {
             cerr << error.what() << endl;
         }

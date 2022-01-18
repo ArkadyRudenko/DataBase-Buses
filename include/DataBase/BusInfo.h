@@ -16,7 +16,7 @@ using StopsList = std::vector<std::shared_ptr<BusStop>>;
 
 class BusInfo {
 public:
-    explicit BusInfo(StopsList busStops);
+    explicit BusInfo(StopsList busStops, Route route);
 
     const StopsList &getListStops() const;
 
@@ -24,6 +24,6 @@ public:
 
 private:
     StopsList busStops_;
-    Route route;
+    Route route_;
 };
 

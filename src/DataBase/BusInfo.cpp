@@ -4,27 +4,24 @@
 #include "BusInfo.h"
 
 using namespace std;
-namespace rng = std::ranges;
+//namespace rng = std::ranges;
 
 const StopsList &BusInfo::getListStops() const {
     return busStops_;
 }
 
 Route BusInfo::getRoute() const {
-    return route;
+    return route_;
 }
 
-BusInfo::BusInfo(StopsList busStops)
-        : busStops_(move(busStops)) {
-    if ((*busStops_.begin())->name == busStops_.back()->name) {
-        route = Route::ANNULAR;
-    } else {
-        route = Route::STRAIGHT;
+BusInfo::BusInfo(StopsList busStops, Route route)
+        : busStops_(move(busStops)), route_(route) {
+    if (route != Route::ANNULAR) {
         StopsList second_part;
-        for (int i = busStops_.size() / 2; i >= 0; i--) {
+        for (int i = busStops_.size() - 2; i >= 0; i--) {
             second_part.push_back(busStops_[i]);
-        }
-        rng::copy(second_part, back_inserter(busStops_));
+        } // TODO rng
+        copy(second_part.begin(), second_part.end(), back_inserter(busStops_));
     }
 }
 

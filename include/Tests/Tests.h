@@ -7,15 +7,15 @@
 #include "PasreRequests.h"
 #include "BaseBusesProcess.h"
 
-#include "../../test_runner.h"
-#include "../../profile.h"
+#include "test_runner.h"
+#include "profile.h"
 
 using namespace std;
 
-void SimpleTestOnReadStop();
+void SimpleOnReadStopTest();
 
-void SimpleTestOnReadStopWithTire();
+void SimpleOnReadStopWithTireTest();
 
-void SimpleTestOnDataBase();
+void SimpleOnDataBaseTest();
 
 void TestAll();

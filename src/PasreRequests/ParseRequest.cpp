@@ -5,7 +5,7 @@
 #include "PasreRequests.h"
 
 using namespace std;
-namespace rng = std::ranges;
+//namespace rng = std::ranges;
 
 
 string RemoveSpaces(string_view str) {
@@ -34,19 +34,23 @@ vector<string> Split(string_view str, char c) {
             str.remove_prefix(space + 1);
         }
     }
-#ifdef TEST
-    for (auto &s: result) {
-        cout << s << "|" << endl;
-    }
-#endif
     return result;
 }
 
-vector<string> ReadStop(istream &is) {
+Route GetRoutByChar(char top) {
+    if(top == '>') {
+        return Route::ANNULAR;
+    } else {
+        return Route::STRAIGHT;
+    }
+}
+
+pair<vector<string>, Route> ReadStop(istream &is) {
     string line;
     char top;
     getline(is, line);
-    auto it = rng::find_if(line, [](char ch) {
+    // TODO rng
+    auto it = find_if(line.begin(), line.end(), [](char ch) {
         return ch == '>';
     });
     if (it == line.end()) {
@@ -55,5 +59,5 @@ vector<string> ReadStop(istream &is) {
         top = '>';
     }
 
-    return Split(line, top);
+    return {Split(line, top), GetRoutByChar(top)};
 }

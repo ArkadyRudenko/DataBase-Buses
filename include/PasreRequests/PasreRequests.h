@@ -1,9 +1,8 @@
 #pragma once
-
-//#define TEST
+#include "BusInfo.h"
 
 std::string RemoveSpaces(std::string_view str);
 
 std::vector<std::string> Split(std::string_view str, char c);
 
-std::vector<std::string> ReadStop(std::istream &is);
+std::pair<std::vector<std::string>, Route> ReadStop(std::istream &is);
