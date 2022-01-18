@@ -11,7 +11,7 @@ void AddStop::Execute(BaseBuses &buses, std::istream &is) {
     double latitude, longitude;
     is >> latitude;
     if (is.peek() != ',') {
-        throw logic_error("Expected ,"); // TODO
+        throw logic_error("Expected ,");
     }
     is.ignore(1);
     is >> longitude;

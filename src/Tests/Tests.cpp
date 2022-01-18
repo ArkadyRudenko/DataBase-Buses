@@ -1,4 +1,5 @@
 #include "Tests.h"
+#include "GenereateLongTest.h"
 
 using namespace std;
 
@@ -71,10 +72,20 @@ void ExceptionTestOnDataBase() {
     string expected = "Bus 256: 6 stops on route, 5 unique stops, 4371.02 route length\n"
                       "Bus 750: not found\n"
                       "Bus 751: not found\n";
-    stringstream realresult;
+    stringstream real_result;
     BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    BaseBusesProcess(baseBuses, is, realresult);
-    ASSERT_EQUAL(expected, realresult.str());
+    BaseBusesProcess(baseBuses, is, real_result);
+    ASSERT_EQUAL(expected, real_result.str());
+}
+
+void LongTestOnDataBase() {
+    stringstream is;
+    Generate(is);
+    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
+    stringstream is_process;
+    stringstream is_result;
+    GenerateReq(is_process);
+    BaseBusesProcess(baseBuses, is_process, is_result);
 }
 
 void TestAll() {
@@ -83,4 +94,8 @@ void TestAll() {
     RUN_TEST(tr, SimpleTestOnReadStopWithTire);
     RUN_TEST(tr, SimpleTestOnDataBase);
     RUN_TEST(tr, ExceptionTestOnDataBase);
+    {
+        LOG_DURATION("Long Test");
+        LongTestOnDataBase();
+    }
 }

@@ -5,8 +5,6 @@
 using namespace std;
 using MapStates = unordered_map<string, shared_ptr<StateListen>>;
 
-MapStates CreateMapStates();
-
 void BaseBusesProcess(BaseBuses &baseBuses, istream &is, ostream& os) {
     int count_command;
     is >> count_command;

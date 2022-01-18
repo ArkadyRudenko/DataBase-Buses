@@ -1,6 +1,7 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 #include "BaseBuses.h"
 
@@ -12,7 +13,7 @@ void BaseBuses::AddBus(int bus, std::vector<std::string> stops_list) {
     StopsList busInfoList;
     for (auto &stop: stops_list) {
         busInfoList.push_back(make_shared<BusStop>(
-                *find_if(stops.begin(), stops.end(), [&](const BusStop &bus_stop) {
+                *rng::find_if(stops, [&](const BusStop &bus_stop) {
                     return bus_stop.name == stop;
                 })
         ));

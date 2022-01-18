@@ -5,7 +5,6 @@
 #include "BaseBusesBuilder.h"
 #include "BaseBusesProcess.h"
 #include "Tests.h"
-#include "profile.h"
 
 using namespace std;
 namespace rng = std::ranges;
@@ -16,5 +15,4 @@ int main() {
     cin.tie(nullptr);
     BaseBuses baseBuses = BaseBusesBuilder().BuildBase();
     BaseBusesProcess(baseBuses);
-
 }

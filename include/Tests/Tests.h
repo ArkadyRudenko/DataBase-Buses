@@ -8,6 +8,7 @@
 #include "BaseBusesProcess.h"
 
 #include "../../test_runner.h"
+#include "../../profile.h"
 
 using namespace std;
 
