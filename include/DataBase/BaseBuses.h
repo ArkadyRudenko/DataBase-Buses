@@ -28,7 +28,7 @@ struct CompareForBusStop {
 class BaseBuses {
 public:
 
-    void AddBus(int bus, BusInfo busInfo);
+    void AddBus(int bus, std::vector<std::string> stops_list);
 
     void AddStop(BusStop busStop);
 
@@ -38,21 +38,11 @@ private:
     std::unordered_map<int, BusInfo> buses;
     std::set<BusStop, CompareForBusStop> stops;
 
-    class CalculateLength {
-    private:
-        constexpr static const double PI = 3.1415926535;
-        constexpr static const int EARTH_RADIUS = 6371000;
+    constexpr static const double PI = 3.1415926535;
+    constexpr static const int EARTH_RADIUS = 6371000;
 
-        const std::vector<std::string> &stops_path;
-        const std::set<BusStop, CompareForBusStop> &stops_coordinate_path;
-    public:
-        CalculateLength(const std::vector<std::string> &stops_path,
-                        const std::set<BusStop, CompareForBusStop> &stops_coordinate_path)
-                : stops_path(stops_path), stops_coordinate_path(stops_coordinate_path) {}
-
-        double calcLength();
-
-        double calcLengthBetweenTwoStops(size_t, size_t);
-    };
+    static double calcLength(StopsList stopsList);
+    static double calcLengthBetweenTwoStops(const BusStop* lhs, const BusStop* rhs);
+    static double calcRadians(double);
 };
 

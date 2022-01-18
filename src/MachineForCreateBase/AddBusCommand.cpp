@@ -9,10 +9,10 @@ void AddBusCommand::Execute(BaseBuses& baseBuses, std::istream &is) {
     if (is.peek() != ':') {
         string wrong_line;
         getline(is, wrong_line);
-        throw logic_error("Expected \':\', but was: " + to_string(is.peek()));
+        throw logic_error("Expected \':\', but was: " + to_string((wrong_line[0])));
     }
     is.ignore(1);
-    baseBuses.AddBus(id_bus, BusInfo(ReadStop(is)));
+    baseBuses.AddBus(id_bus, ReadStop(is));
 #ifdef TEST
     cout << "Bus ID = "<< id_bus << "<>\n";
 #endif

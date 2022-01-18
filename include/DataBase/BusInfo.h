@@ -5,22 +5,25 @@
 #include <iostream>
 
 #include "BusStop.h"
+#include <memory>
 
 enum Route {
     ANNULAR = 0,
     STRAIGHT
 };
 
+using StopsList = std::vector<std::shared_ptr<BusStop>>;
+
 class BusInfo {
 public:
-    explicit BusInfo(std::vector<std::string> busStops);
+    explicit BusInfo(StopsList busStops);
 
-    const std::vector<std::string> &getListStops() const;
+    const StopsList &getListStops() const;
 
     Route getRoute() const;
 
 private:
-    std::vector<std::string> busStops_;
+    StopsList busStops_;
     Route route;
 };
 

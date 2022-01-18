@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "BaseBuses.h"
-
 #include "CommandBuild.h"
 
 class BaseBusesBuilder {
@@ -15,4 +14,5 @@ private:
     std::unordered_map<std::string, std::shared_ptr<CommandBuild>> commands;
 
     void CreateCommands();
+    void CreateStream(std::stringstream&, std::vector<std::string_view>&);
 };
