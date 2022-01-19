@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 
 struct BusStop {
@@ -6,4 +7,3 @@ struct BusStop {
     double latitude;
     double longitude;
 };
-

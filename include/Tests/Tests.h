@@ -18,4 +18,12 @@ void SimpleOnReadStopWithTireTest();
 
 void SimpleOnDataBaseTest();
 
+void StringBusesOnDataBaseTest();
+
+void SameStopsBusesOnDataBaseTest();
+
+void CheckInfoStopsBusesOnDataBaseTest();
+
+void LongOnDataBaseTest();
+
 void TestAll();

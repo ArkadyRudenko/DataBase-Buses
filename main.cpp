@@ -7,7 +7,6 @@
 #include "Tests.h"
 
 using namespace std;
-//namespace rng = std::ranges;
 
 int main() {
     TestAll();

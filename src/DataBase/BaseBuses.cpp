@@ -10,54 +10,39 @@ using namespace std;
 //namespace rng = std::ranges;
 
 
-void BaseBuses::AddBus(string bus, std::pair<std::vector<std::string>, Route> stops_list) {
+void BaseBuses::AddStop(const BusStop &busStop) {
+    name_in_stop.insert({busStop.name, busStop});
+    stop_in_buses.insert({busStop.name, {}});
+}
+
+
+void BaseBuses::AddBus(const string &bus,
+                       const std::pair<std::vector<std::string>, Route> &stops_list) {
     StopsList busInfoList;
     for (auto &stop: stops_list.first) {
+        stop_in_buses.find(stop)->second.insert(bus); // ?? comfortobal reading?
         busInfoList.push_back(make_shared<BusStop>(
-                // TODO rng
-                *find_if(stops.begin(), stops.end(), [&](const BusStop &bus_stop) {
-                    return bus_stop.name == stop;
-                })
+                name_in_stop.find(stop)->second
         ));
     }
-    buses.insert({bus, move(BusInfo(busInfoList, stops_list.second))}); // TODO move need???
+    buses.insert({bus, move(BusInfo(move(busInfoList), stops_list.second))}); // TODO move need???
 }
 
 void BaseBuses::GetInfoStop(const std::string &stop, ostream &os) {
-    auto it = find_if(stops.begin(), stops.end(), [&](const BusStop &stop_) {
-        return stop_.name == stop;
-    });
+    auto it = stop_in_buses.find(stop);
     os << "Stop " << stop << ": ";
-    if (it == stops.end()) {
+    if (it == stop_in_buses.end()) {
         os << "not found\n";
+    } else if (it->second.empty()) {
+        os << "no buses\n";
     } else {
-        set<string> buses_of_stop;
-        for (const auto &bus: buses) {
-            const auto &list_stops = bus.second.getListStops();
-            for (const auto &ptr_stop: list_stops) {
-                if (ptr_stop->name == stop) {
-                    buses_of_stop.insert(bus.first);
-                }
-            }
+        os << "buses ";
+        for (const auto &s: it->second) {
+            os << s << " ";
         }
-        if (buses_of_stop.empty()) {
-            os << "no buses\n";
-        } else {
-            os << "buses ";
-            for (const auto &s: buses_of_stop) {
-                os << s << " ";
-            }
-            os << '\n';
-        }
+        os << '\n';
     }
-
 }
-
-
-void BaseBuses::AddStop(BusStop busStop) {
-    stops.insert(std::move(busStop));
-}
-
 
 void BaseBuses::GetInfoBus(const string &bus, std::ostream &os) {
     os << "Bus " << bus << ": ";
