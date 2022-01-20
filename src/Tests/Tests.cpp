@@ -1,5 +1,8 @@
+#include <unordered_map>
+
 #include "Tests.h"
 #include "GenereateLongTest.h"
+#include "AddStop.h"
 
 using namespace std;
 
@@ -26,140 +29,63 @@ void SimpleOnReadStopWithTireTest() {
     ASSERT_EQUAL(expected, ReadStop(is).first);
 }
 
-void SimpleOnDataBaseTest() {
-    stringstream is;
-    is << "10\n"
-          "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
-          "Stop Marushkino: 55.595884, 37.209755\n"
-          "Bus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\n"
-          "Bus 750: Tolstopaltsevo - Marushkino - Rasskazovka\n"
-          "Stop Rasskazovka: 55.632761, 37.333324\n"
-          "Stop Biryulyovo Zapadnoye: 55.574371, 37.6517\n"
-          "Stop Biryusinka: 55.581065, 37.64839\n"
-          "Stop Universam: 55.587655, 37.645687\n"
-          "Stop Biryulyovo Tovarnaya: 55.592028, 37.653656\n"
-          "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
-          "3\n"
-          "Bus 256\n"
-          "Bus 750\n"
-          "Bus 751";
-    string expected = "Bus 256: 6 stops on route, 5 unique stops, 4371.02 route length\n"
-                      "Bus 750: 5 stops on route, 3 unique stops, 20939.5 route length\n"
-                      "Bus 751: not found\n";
-    stringstream realresult;
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    BaseBusesProcess(baseBuses, is, realresult);
-    ASSERT_EQUAL(expected, realresult.str());
+
+void getTokensTest() {
+    unordered_map<string, int> expected = {
+            {"STOP",                  5},
+            {"Biryulyovo Tovarnaya",  900},
+            {"Rossoshanskaya ulitsa", 5600}
+    };
+    ASSERT_EQUAL(expected, getTokens(" 5600m to Rossoshanskaya ulitsa, 900m to Biryulyovo Tovarnaya, 5m to STOP"));
 }
 
-
-void StringBusesOnDataBaseTest() {
+void AddStopTest() {
     stringstream is;
-    is << "10\n"
-          "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
-          "Stop Marushkino: 55.595884, 37.209755\n"
-          "Bus BUS25: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\n"
-          "Bus B B: Tolstopaltsevo - Marushkino - Rasskazovka\n"
-          "Stop Rasskazovka: 55.632761, 37.333324\n"
-          "Stop Biryulyovo Zapadnoye: 55.574371, 37.6517\n"
-          "Stop Biryusinka: 55.581065, 37.64839\n"
-          "Stop Universam: 55.587655, 37.645687\n"
-          "Stop Biryulyovo Tovarnaya: 55.592028, 37.653656\n"
-          "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
-          "3\n"
-          "Bus BUS25\n"
-          "Bus B B\n"
-          "Bus 751";
-    string expected = "Bus BUS25: 6 stops on route, 5 unique stops, 4371.02 route length\n"
-                      "Bus B B: 5 stops on route, 3 unique stops, 20939.5 route length\n"
-                      "Bus 751: not found\n";
-    stringstream real_result;
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    BaseBusesProcess(baseBuses, is, real_result);
-    ASSERT_EQUAL(expected, real_result.str());
+    is << " Biryulyovo Zapadnoye: 55.574371, 37.6517, 7500m"
+          " to Rossoshanskaya ulitsa, 1800m to Biryusinka, 2400m to Universam";
+    string name_stop;
+
+    getline(is, name_stop, ':');
+    is.ignore(1);
+    double latitude, longitude;
+    is >> latitude;
+    is.ignore(1);
+    is >> longitude;
+
+    if (is.peek() == ',') {
+        ASSERT_EQUAL("Biryulyovo Zapadnoye", RemoveSpaces(name_stop));
+        ASSERT_EQUAL(latitude, 55.574371);
+        ASSERT_EQUAL(longitude, 37.6517);
+        is.ignore(1);
+        string line;
+        getline(is, line);
+        unordered_map<string, int> exp {
+                {"Universam", 2400}, {"Biryusinka", 1800}, {"Rossoshanskaya ulitsa", 7500}
+        };
+        ASSERT_EQUAL(exp, getTokens(line));
+    }
 }
 
-
-void SameStopsBusesOnDataBaseTest() {
-    stringstream is;
-    is << "9\n"
-          "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
-          "Stop Marushkino: 55.595884, 37.209755\n"
-          "Bus 100: Tolstopaltsevo - Marushkino - Rasskazovka - Biryusinka - Tolstopaltsevo - Marushkino\n"
-          "Stop Rasskazovka: 55.632761, 37.333324\n"
-          "Stop Biryulyovo Zapadnoye: 55.574371, 37.6517\n"
-          "Stop Biryusinka: 55.581065, 37.64839\n"
-          "Stop Universam: 55.587655, 37.645687\n"
-          "Stop Biryulyovo Tovarnaya: 55.592028, 37.653656\n"
-          "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
-          "1\n"
-          "Bus 100\n";
-    string expected = "Bus 100: 11 stops on route, 4 unique stops, 121243 route length\n";
-
-    stringstream real_result;
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    BaseBusesProcess(baseBuses, is, real_result);
-    ASSERT_EQUAL(expected, real_result.str());
-}
-
-
-void CheckInfoStopsBusesOnDataBaseTest() {
-    stringstream is;
-    is << "13\n"
-          "Stop Tolstopaltsevo: 55.611087, 37.20829\n"
-          "Stop Marushkino: 55.595884, 37.209755\n"
-          "Bus 256: Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\n"
-          "Bus 750: Tolstopaltsevo - Marushkino - Rasskazovka\n"
-          "Stop Rasskazovka: 55.632761, 37.333324\n"
-          "Stop Biryulyovo Zapadnoye: 55.574371, 37.6517\n"
-          "Stop Biryusinka: 55.581065, 37.64839\n"
-          "Stop Universam: 55.587655, 37.645687\n"
-          "Stop Biryulyovo Tovarnaya: 55.592028, 37.653656\n"
-          "Stop Biryulyovo Passazhirskaya: 55.580999, 37.659164\n"
-          "Bus 828: Biryulyovo Zapadnoye > Universam > Rossoshanskaya ulitsa > Biryulyovo Zapadnoye\n"
-          "Stop Rossoshanskaya ulitsa: 55.595579, 37.605757\n"
-          "Stop Prazhskaya: 55.611678, 37.603831\n"
-          "6\n"
-          "Bus 256\n"
-          "Bus 750\n"
-          "Bus 751\n"
-          "Stop Samara\n"
-          "Stop Prazhskaya\n"
-          "Stop Biryulyovo Zapadnoye\n";
-
-    string expected = "Bus 256: 6 stops on route, 5 unique stops, 4371.02 route length\n"
-                      "Bus 750: 5 stops on route, 3 unique stops, 20939.5 route length\n"
-                      "Bus 751: not found\n"
-                      "Stop Samara: not found\n"
-                      "Stop Prazhskaya: no buses\n"
-                      "Stop Biryulyovo Zapadnoye: buses 256 828 \n";
-
-    stringstream real_result;
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    BaseBusesProcess(baseBuses, is, real_result);
-    ASSERT_EQUAL(expected, real_result.str());
-}
-
-void LongOnDataBaseTest() {
-    stringstream is;
-    Generate(is);
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(is);
-    stringstream is_process;
-    stringstream is_result;
-    GenerateReq(is_process);
-    BaseBusesProcess(baseBuses, is_process, is_result);
+void DifferentLengthTest() {
+    stringstream ss;
+    ss << "3\n"
+          "Stop Stop1: 55, 37, 1000m to Stop2\n"
+          "Stop Stop2: 50, 47, 50m to Stop1\n"
+          "Bus 1: Stop1 - Stop2\n";
+    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(ss);
+    stringstream ss_proc;
+    ss_proc << "1\n"
+               "Bus 1\n";
+    stringstream res;
+    BaseBusesProcess(baseBuses, ss_proc, res);
+    ASSERT_EQUAL("Bus 1: 3 stops on route, 2 unique stops, 1050 route length, 0.0006003184 curvature\n", res.str());
 }
 
 void TestAll() {
     TestRunner tr;
     RUN_TEST(tr, SimpleOnReadStopTest);
     RUN_TEST(tr, SimpleOnReadStopWithTireTest);
-    RUN_TEST(tr, SimpleOnDataBaseTest);
-    RUN_TEST(tr, StringBusesOnDataBaseTest);
-    RUN_TEST(tr, SameStopsBusesOnDataBaseTest);
-    RUN_TEST(tr, CheckInfoStopsBusesOnDataBaseTest);
-    {
-        LOG_DURATION("Long Test");
-        LongOnDataBaseTest();
-    }
+    RUN_TEST(tr, AddStopTest);
+    RUN_TEST(tr, getTokensTest);
+    RUN_TEST(tr, DifferentLengthTest);
 }

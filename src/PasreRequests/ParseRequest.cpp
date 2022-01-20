@@ -38,7 +38,7 @@ vector<string> Split(string_view str, char c) {
 }
 
 Route GetRoutByChar(char top) {
-    if(top == '>') {
+    if (top == '>') {
         return Route::ANNULAR;
     } else {
         return Route::STRAIGHT;
@@ -60,4 +60,28 @@ pair<vector<string>, Route> ReadStop(istream &is) {
     }
 
     return {Split(line, top), GetRoutByChar(top)};
+}
+
+
+std::unordered_map<std::string, int> getTokens(std::string_view str) {
+    unordered_map<std::string, int> result;
+    while (true) {
+        size_t meter = str.find('m');
+        stringstream ss;
+        ss << str.substr(0, meter);
+        int length;
+        ss >> length;
+        str.remove_prefix(meter + 5);
+        size_t comma = str.find(',');
+        if(comma != str.npos) {
+            string name(str.substr(0, comma));
+            str.remove_prefix(comma + 1);
+            result.insert({name, length});
+        } else {
+            string name(str.substr(0, str.npos));
+            result.insert({name, length});
+            break;
+        }
+    }
+    return result;
 }

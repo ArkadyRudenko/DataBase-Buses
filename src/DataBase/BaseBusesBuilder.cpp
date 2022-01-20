@@ -19,6 +19,7 @@ BaseBuses BaseBusesBuilder::BuildBase(std::istream &is) {
     for (int i = 0; i < count_command + 1; ++i) {
         string command;
         getline(is, command);
+
         all_commands.push_back(move(command));
     }
 
@@ -44,6 +45,7 @@ BaseBuses BaseBusesBuilder::BuildBase(std::istream &is) {
         }
     }
     return baseBuses;
+
 }
 
 void BaseBusesBuilder::CreateCommands() {
