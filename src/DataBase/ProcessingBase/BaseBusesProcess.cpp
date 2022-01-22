@@ -4,17 +4,16 @@
 #include "GetStopInfo.h"
 
 using namespace std;
+using namespace nlohmann;
 using MapStates = unordered_map<string, shared_ptr<StateListen>>;
 
-void BaseBusesProcess(BaseBuses &baseBuses, istream &is, ostream& os) {
-    int count_command;
-    is >> count_command;
+void BaseBusesProcess(BaseBuses &baseBuses, const json& stat_requests, ostream& os) {
     MapStates mapStates = CreateMapStates();
-    for (int i = 0; i < count_command; ++i) {
-        string command;
-        is >> command;
-        mapStates.at(command)->Listen(baseBuses, os, is);
+    json res;
+    for(const auto& req : stat_requests) {
+        res.push_back(mapStates[req["type"].get<string>()]->Listen(baseBuses, req, os));
     }
+    os << res;
 }
 
 using namespace StateListening;

@@ -3,8 +3,9 @@
 #include <iostream>
 
 #include "BaseBuses.h"
+#include "nlohmann/json.hpp"
 
 class CommandBuild {
 public:
-    virtual void Execute(BaseBuses&, std::istream& is) = 0;
+    virtual void Execute(BaseBuses&, nlohmann::json&) = 0;
 };

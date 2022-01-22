@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <optional>
 #include <map>
 
 #include "BaseBuses.h"
@@ -17,13 +18,11 @@ void BaseBuses::AddStop(const BusStop &busStop) {
     } else {
         name_in_stop.insert({busStop.name, busStop});
     }
-
     stop_in_buses.insert({busStop.name, {}});
 
     const auto &lengths = busStop.getLengths();
     for (const auto &stop: lengths) {
-        auto other_stop = name_in_stop.find(stop.first);
-        if (other_stop != name_in_stop.end()) {
+        if (auto other_stop = name_in_stop.find(stop.first); other_stop != name_in_stop.end()) {
             other_stop->second.AddLength({busStop.name, stop.second});
         } else {
             BusStop new_bus_stop(stop.first, -1, -1); // later will be new values, other_stop`s tmp
@@ -34,48 +33,37 @@ void BaseBuses::AddStop(const BusStop &busStop) {
 }
 
 
-void BaseBuses::AddBus(const string &bus,
-                       const std::pair<std::vector<std::string>, Route> &stops_list) {
+void BaseBuses::AddBus(const string bus,
+                       const vector<string> stops, Route route) {
     StopsList busInfoList;
-    for (auto &stop: stops_list.first) {
+
+    for (auto &stop: stops) {
         stop_in_buses.find(stop)->second.insert(bus);
         busInfoList.push_back(make_shared<BusStop>(
                 name_in_stop.find(stop)->second
         ));
     }
-    buses.insert({bus, move(BusInfo(move(busInfoList), stops_list.second))}); // TODO move need???
+    BusInfo busInfo(busInfoList, route);
+    busInfo.setRealLength(calcRealLength(busInfoList));
+    busInfo.setCurvature(calcCurvature(busInfoList,busInfo.getRealLength()));
+    busInfo.setCountUniqueStops(calcUniqueStops(busInfoList));
+    //???????????????????
+    buses.insert({bus, busInfo});
 }
 
-void BaseBuses::GetInfoStop(const std::string &stop, ostream &os) {
-    auto it = stop_in_buses.find(stop);
-    os << "Stop " << stop << ": ";
-    if (it == stop_in_buses.end()) {
-        os << "not found\n";
-    } else if (it->second.empty()) {
-        os << "no buses\n";
+optional<const set<string>> BaseBuses::GetInfoStop(const std::string &stop) {
+    if (auto it = stop_in_buses.find(stop); it == stop_in_buses.end()) {
+        return nullopt;
     } else {
-        os << "buses ";
-        for (const auto &s: it->second) {
-            os << s << " ";
-        }
-        os << '\n';
+        return it->second; // copy
     }
 }
 
-void BaseBuses::GetInfoBus(const string &bus, std::ostream &os) {
-    os << "Bus " << bus << ": ";
-    auto it = buses.find(bus);
-    if (it == buses.end()) {
-        os << "not found\n";
+optional<const BusInfo> BaseBuses::GetInfoBus(const string &bus) {
+    if (auto it = buses.find(bus); it == buses.end()) {
+        return nullopt;
     } else {
-        const StopsList &stops_bus = buses.at(bus).getListStops();
-
-        os << stops_bus.size() << " stops on route, " <<
-           calcUniqueStops(stops_bus)
-           << " unique stops, ";
-        int64_t real_length = calcRealLength(stops_bus);
-        os << setprecision(6) << real_length << " route length, ";
-        os << setprecision(7) << calcCurvature(stops_bus, real_length) << " curvature\n";
+        return it->second; // copy
     }
 }
 
@@ -106,7 +94,7 @@ int BaseBuses::calcUniqueStops(const StopsList &stopsList) {
     return names.size();
 }
 
-double BaseBuses::calcCurvature(const StopsList &stopsList, int real_length) {
+double BaseBuses::calcCurvature(const StopsList &stopsList, int64_t real_length) {
     return (real_length * 1.) / (calcLength(stopsList) * 1.);
 }
 

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "BaseBuses.h"
+#include "nlohmann/json.hpp"
 
 class StateListen {
 public:
-    virtual void Listen(BaseBuses&, std::ostream&, std::istream&) = 0;
+    virtual nlohmann::json Listen(BaseBuses&, const nlohmann::json&, std::ostream&) = 0;
 };

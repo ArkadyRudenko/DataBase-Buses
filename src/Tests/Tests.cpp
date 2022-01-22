@@ -1,91 +1,173 @@
 #include <unordered_map>
 
 #include "Tests.h"
-#include "GenereateLongTest.h"
-#include "AddStop.h"
+#include "AddStopCommand.h"
 
 using namespace std;
 
-void SimpleOnReadStopTest() {
-    stringstream is;
-    is << " Biryulyovo Zapadnoye > Biryusinka > "
-          "Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye";
-    vector<string> expected = {
-            "Biryulyovo Zapadnoye", "Biryusinka", "Universam",
-            "Biryulyovo Tovarnaya", "Biryulyovo Passazhirskaya",
-            "Biryulyovo Zapadnoye"
-    };
-    ASSERT_EQUAL(expected, ReadStop(is).first);
-}
-
-void SimpleOnReadStopWithTireTest() {
-    stringstream is;
-    is << " Biryulyovo Zapadnoye - Biryusinka - "
-          "Universam - Biryulyovo Tovarnaya - Biryulyovo Passazhirskaya ";
-    vector<string> expected = {
-            "Biryulyovo Zapadnoye", "Biryusinka", "Universam",
-            "Biryulyovo Tovarnaya", "Biryulyovo Passazhirskaya"
-    };
-    ASSERT_EQUAL(expected, ReadStop(is).first);
-}
-
-
-void getTokensTest() {
-    unordered_map<string, int> expected = {
-            {"STOP",                  5},
-            {"Biryulyovo Tovarnaya",  900},
-            {"Rossoshanskaya ulitsa", 5600}
-    };
-    ASSERT_EQUAL(expected, getTokens(" 5600m to Rossoshanskaya ulitsa, 900m to Biryulyovo Tovarnaya, 5m to STOP"));
-}
-
-void AddStopTest() {
-    stringstream is;
-    is << " Biryulyovo Zapadnoye: 55.574371, 37.6517, 7500m"
-          " to Rossoshanskaya ulitsa, 1800m to Biryusinka, 2400m to Universam";
-    string name_stop;
-
-    getline(is, name_stop, ':');
-    is.ignore(1);
-    double latitude, longitude;
-    is >> latitude;
-    is.ignore(1);
-    is >> longitude;
-
-    if (is.peek() == ',') {
-        ASSERT_EQUAL("Biryulyovo Zapadnoye", RemoveSpaces(name_stop));
-        ASSERT_EQUAL(latitude, 55.574371);
-        ASSERT_EQUAL(longitude, 37.6517);
-        is.ignore(1);
-        string line;
-        getline(is, line);
-        unordered_map<string, int> exp {
-                {"Universam", 2400}, {"Biryusinka", 1800}, {"Rossoshanskaya ulitsa", 7500}
-        };
-        ASSERT_EQUAL(exp, getTokens(line));
-    }
-}
-
-void DifferentLengthTest() {
-    stringstream ss;
-    ss << "3\n"
-          "Stop Stop1: 55, 37, 1000m to Stop2\n"
-          "Stop Stop2: 50, 47, 50m to Stop1\n"
-          "Bus 1: Stop1 - Stop2\n";
-    BaseBuses baseBuses = BaseBusesBuilder().BuildBase(ss);
-    stringstream ss_proc;
-    ss_proc << "1\n"
-               "Bus 1\n";
-    stringstream res;
-    BaseBusesProcess(baseBuses, ss_proc, res);
-    ASSERT_EQUAL("Bus 1: 3 stops on route, 2 unique stops, 1050 route length, 0.0006003184 curvature\n", res.str());
-}
 
 void TestAll() {
     TestRunner tr;
-    RUN_TEST(tr, SimpleOnReadStopTest);
-    RUN_TEST(tr, SimpleOnReadStopWithTireTest);
-    RUN_TEST(tr, AddStopTest);
-    RUN_TEST(tr, getTokensTest);
-    RUN_TEST(tr, DifferentLengthTest);
+}
+
+stringstream GetStream() {
+    stringstream ss;
+    ss << "{\n"
+          "  \"base_requests\": [\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Marushkino\": 3900\n"
+          "      },\n"
+          "      \"longitude\": 37.20829,\n"
+          "      \"name\": \"Tolstopaltsevo\",\n"
+          "      \"latitude\": 55.611087\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Rasskazovka\": 9900\n"
+          "      },\n"
+          "      \"longitude\": 37.209755,\n"
+          "      \"name\": \"Marushkino\",\n"
+          "      \"latitude\": 55.595884\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Bus\",\n"
+          "      \"name\": \"256\",\n"
+          "      \"stops\": [\n"
+          "        \"Biryulyovo Zapadnoye\",\n"
+          "        \"Biryusinka\",\n"
+          "        \"Universam\",\n"
+          "        \"Biryulyovo Tovarnaya\",\n"
+          "        \"Biryulyovo Passazhirskaya\",\n"
+          "        \"Biryulyovo Zapadnoye\"\n"
+          "      ],\n"
+          "      \"is_roundtrip\": true\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Bus\",\n"
+          "      \"name\": \"750\",\n"
+          "      \"stops\": [\n"
+          "        \"Tolstopaltsevo\",\n"
+          "        \"Marushkino\",\n"
+          "        \"Rasskazovka\"\n"
+          "      ],\n"
+          "      \"is_roundtrip\": false\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {},\n"
+          "      \"longitude\": 37.333324,\n"
+          "      \"name\": \"Rasskazovka\",\n"
+          "      \"latitude\": 55.632761\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Rossoshanskaya ulitsa\": 7500,\n"
+          "        \"Biryusinka\": 1800,\n"
+          "        \"Universam\": 2400\n"
+          "      },\n"
+          "      \"longitude\": 37.6517,\n"
+          "      \"name\": \"Biryulyovo Zapadnoye\",\n"
+          "      \"latitude\": 55.574371\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Universam\": 750\n"
+          "      },\n"
+          "      \"longitude\": 37.64839,\n"
+          "      \"name\": \"Biryusinka\",\n"
+          "      \"latitude\": 55.581065\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Rossoshanskaya ulitsa\": 5600,\n"
+          "        \"Biryulyovo Tovarnaya\": 900\n"
+          "      },\n"
+          "      \"longitude\": 37.645687,\n"
+          "      \"name\": \"Universam\",\n"
+          "      \"latitude\": 55.587655\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Biryulyovo Passazhirskaya\": 1300\n"
+          "      },\n"
+          "      \"longitude\": 37.653656,\n"
+          "      \"name\": \"Biryulyovo Tovarnaya\",\n"
+          "      \"latitude\": 55.592028\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {\n"
+          "        \"Biryulyovo Zapadnoye\": 1200\n"
+          "      },\n"
+          "      \"longitude\": 37.659164,\n"
+          "      \"name\": \"Biryulyovo Passazhirskaya\",\n"
+          "      \"latitude\": 55.580999\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Bus\",\n"
+          "      \"name\": \"828\",\n"
+          "      \"stops\": [\n"
+          "        \"Biryulyovo Zapadnoye\",\n"
+          "        \"Universam\",\n"
+          "        \"Rossoshanskaya ulitsa\",\n"
+          "        \"Biryulyovo Zapadnoye\"\n"
+          "      ],\n"
+          "      \"is_roundtrip\": true\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {},\n"
+          "      \"longitude\": 37.605757,\n"
+          "      \"name\": \"Rossoshanskaya ulitsa\",\n"
+          "      \"latitude\": 55.595579\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"road_distances\": {},\n"
+          "      \"longitude\": 37.603831,\n"
+          "      \"name\": \"Prazhskaya\",\n"
+          "      \"latitude\": 55.611678\n"
+          "    }\n"
+          "  ],\n"
+          "  \"stat_requests\": [\n"
+          "    {\n"
+          "      \"type\": \"Bus\",\n"
+          "      \"name\": \"256\",\n"
+          "      \"id\": 1965312327\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Bus\",\n"
+          "      \"name\": \"750\",\n"
+          "      \"id\": 519139350\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Bus\",\n"
+          "      \"name\": \"751\",\n"
+          "      \"id\": 194217464\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"name\": \"Samara\",\n"
+          "      \"id\": 746888088\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"name\": \"Prazhskaya\",\n"
+          "      \"id\": 65100610\n"
+          "    },\n"
+          "    {\n"
+          "      \"type\": \"Stop\",\n"
+          "      \"name\": \"Biryulyovo Zapadnoye\",\n"
+          "      \"id\": 1042838872\n"
+          "    }\n"
+          "  ]\n"
+          "}";
+    return ss;
 }

@@ -12,18 +12,6 @@
 
 using namespace std;
 
-void SimpleOnReadStopTest();
-
-void SimpleOnReadStopWithTireTest();
-
-void SimpleOnDataBaseTest();
-
-void StringBusesOnDataBaseTest();
-
-void SameStopsBusesOnDataBaseTest();
-
-void CheckInfoStopsBusesOnDataBaseTest();
-
-void LongOnDataBaseTest();
+stringstream GetStream();
 
 void TestAll();

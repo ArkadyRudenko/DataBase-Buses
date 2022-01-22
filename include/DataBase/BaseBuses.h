@@ -10,13 +10,13 @@
 class BaseBuses {
 public:
 
-    void AddBus(const std::string& bus, const std::pair<std::vector<std::string>, Route>& stops_list);
+    void AddBus(const std::string bus, const std::vector<std::string>, Route route);
 
     void AddStop(const BusStop& busStop);
 
-    void GetInfoBus(const std::string& bus, std::ostream &os);
+    std::optional<const BusInfo> GetInfoBus(const std::string& bus);
 
-    void GetInfoStop(const std::string& stop, std::ostream &os);
+    std::optional<const std::set<std::string>> GetInfoStop(const std::string& stop);
 
 private:
     std::unordered_map<std::string, BusInfo> buses;
@@ -30,7 +30,7 @@ private:
     static double calcLengthBetweenTwoStops(const BusStop* lhs, const BusStop* rhs);
     static double calcRadians(double);
     static int calcUniqueStops(const StopsList& stopsList);
-    static double calcCurvature(const StopsList& stopsList, int);
+    static double calcCurvature(const StopsList& stopsList, int64_t);
     static int64_t calcRealLength(const StopsList& stopsList);
 };
 

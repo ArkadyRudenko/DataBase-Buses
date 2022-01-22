@@ -1,13 +1,26 @@
 #include <sstream>
+#include <vector>
 
 #include "AddBusCommand.h"
 #include "PasreRequests.h"
 
+
 using namespace std;
 
-void AddBusCommand::Execute(BaseBuses& baseBuses, std::istream &is) {
-    string id_bus;
-    getline(is, id_bus, ':');
-    is.ignore(1);
-    baseBuses.AddBus(RemoveSpaces(id_bus), ReadStop(is));
+void AddBusCommand::Execute(BaseBuses &baseBuses, nlohmann::json & bus) {
+    baseBuses.AddBus(bus["name"].get<string>(),
+                     CreateVectorStops(bus["stops"]),
+                     GetRoute(bus["is_roundtrip"]));
+}
+
+std::vector<std::string> CreateVectorStops(const nlohmann::json &stops) {
+    vector<string> res;
+    for (const auto &stop: stops.get<vector<string>>()) {
+        res.push_back(stop);
+    }
+    return res;
+}
+
+Route GetRoute(const nlohmann::json& route) {
+    return route.get<bool>() ? Route::ANNULAR : Route::STRAIGHT;
 }
