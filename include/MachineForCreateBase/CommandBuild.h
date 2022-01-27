@@ -1,11 +1,12 @@
 #pragma once
 
 #include <iostream>
+#include <map>
 
 #include "BaseBuses.h"
-#include "nlohmann/json.hpp"
+#include "json.h"
 
 class CommandBuild {
 public:
-    virtual void Execute(BaseBuses&, nlohmann::json&) = 0;
+    virtual void Execute(BaseBuses&, const std::map<std::string, Json::Node>&) = 0;
 };

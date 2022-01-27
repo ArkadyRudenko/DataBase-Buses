@@ -2,25 +2,24 @@
 #include <vector>
 
 #include "AddBusCommand.h"
-#include "PasreRequests.h"
-
 
 using namespace std;
+using namespace Json;
 
-void AddBusCommand::Execute(BaseBuses &baseBuses, nlohmann::json & bus) {
-    baseBuses.AddBus(bus["name"].get<string>(),
-                     CreateVectorStops(bus["stops"]),
-                     GetRoute(bus["is_roundtrip"]));
+void AddBusCommand::Execute(BaseBuses &baseBuses, const map<string, Node>& bus) {
+    baseBuses.AddBus(bus.at("name").AsString(),
+                     CreateVectorStops(bus.at("stops")),
+                     GetRoute(bus.at("is_roundtrip")));
 }
 
-std::vector<std::string> CreateVectorStops(const nlohmann::json &stops) {
+vector<string> CreateVectorStops(const Node &stops) {
     vector<string> res;
-    for (const auto &stop: stops.get<vector<string>>()) {
-        res.push_back(stop);
+    for (const auto &stop: stops.AsArray()) {
+        res.push_back(stop.AsString());
     }
     return res;
 }
 
-Route GetRoute(const nlohmann::json& route) {
-    return route.get<bool>() ? Route::ANNULAR : Route::STRAIGHT;
+Route GetRoute(const Json::Node& route) {
+    return route.AsBool() ? Route::ANNULAR : Route::STRAIGHT;
 }

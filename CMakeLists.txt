@@ -6,10 +6,8 @@ project(BaseBuses)
 include_directories(include/DataBase)
 include_directories(include/MachineForCreateBase)
 include_directories(include/ParseRequests)
-include_directories(include/DataBase/ProcessingBase)
+include_directories(include/ProcessingBase)
 include_directories(include/Tests)
-
-find_package(nlohmann_json 3.2.0 REQUIRED)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 

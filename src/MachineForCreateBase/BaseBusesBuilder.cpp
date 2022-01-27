@@ -7,15 +7,15 @@
 #include "AddStopCommand.h"
 
 using namespace std;
-using namespace nlohmann;
+using namespace Json;
 //namespace rng = std::ranges;
 
-BaseBuses BaseBusesBuilder::BuildBase(const json &base_requests) {
+BaseBuses BaseBusesBuilder::BuildBase(const Node &base_requests) {
     BaseBuses baseBuses;
     CreateCommands();
 
     for(const auto& req : GetSortedRequests(base_requests)) {
-        commands[req->at("type").get<string>()]->Execute(baseBuses, *req);
+        commands[req->AsMap().at("type").AsString()]->Execute(baseBuses, req->AsMap());
     }
 
     return baseBuses;
@@ -26,18 +26,18 @@ void BaseBusesBuilder::CreateCommands() {
     commands.insert({"Bus", make_shared<AddBusCommand>()});
 }
 
-vector<shared_ptr<json>> GetSortedRequests(const json &requests) {
-    vector<shared_ptr<json>> sorted_requests;
+vector<shared_ptr<Node>> GetSortedRequests(const Json::Node &requests) {
+    vector<shared_ptr<Node>> sorted_requests;
 
-    for (const auto &req: requests) {
+    for (const auto &req: requests.AsArray()) {
         sorted_requests.push_back(
-                make_shared<json>(req)
+                make_shared<Node>(req)
         );
     }
 
     partition(sorted_requests.begin(), sorted_requests.end(),
-              [](shared_ptr<json> &req) {
-                  return req->at("type") == "Stop";
+              [](shared_ptr<Node> &req) {
+                  return req->AsMap().at("type").AsString() == "Stop";
               });
     return sorted_requests;
 }

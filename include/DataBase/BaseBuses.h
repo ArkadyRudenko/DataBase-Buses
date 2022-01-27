@@ -4,6 +4,7 @@
 #include <memory>
 #include <set>
 #include <ranges>
+#include <optional>
 
 #include "BusInfo.h"
 
@@ -30,7 +31,7 @@ private:
     static double calcLengthBetweenTwoStops(const BusStop* lhs, const BusStop* rhs);
     static double calcRadians(double);
     static int calcUniqueStops(const StopsList& stopsList);
-    static double calcCurvature(const StopsList& stopsList, int64_t);
-    static int64_t calcRealLength(const StopsList& stopsList);
+    static double calcCurvature(const StopsList& stopsList, int);
+    static int calcRealLength(const StopsList& stopsList);
 };
 

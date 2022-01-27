@@ -1,10 +1,11 @@
 #include "StateListen.h"
+#include "json.h"
 
 namespace StateListening {
 
     class GetBusInfo : public StateListen {
     public:
-        nlohmann::json Listen(BaseBuses&, const nlohmann::json&, std::ostream&) override;
+        void Listen(BaseBuses&, const std::map<std::string, Json::Node>&, std::ostream&) override;
     };
 
 }

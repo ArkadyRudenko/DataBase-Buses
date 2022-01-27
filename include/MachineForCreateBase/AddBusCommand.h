@@ -2,13 +2,13 @@
 
 #include "CommandBuild.h"
 #include "BusInfo.h"
-#include "nlohmann/json.hpp"
+#include "json.h"
 
 class AddBusCommand : public CommandBuild {
 public:
-    void Execute(BaseBuses&, nlohmann::json&) override;
+    void Execute(BaseBuses&, const std::map<std::string, Json::Node>&) override;
 };
 
-std::vector<std::string> CreateVectorStops(const nlohmann::json&);
+std::vector<std::string> CreateVectorStops(const Json::Node&);
 
-Route GetRoute(const nlohmann::json&);
+Route GetRoute(const Json::Node&);

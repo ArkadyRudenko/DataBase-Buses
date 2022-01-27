@@ -13,5 +13,9 @@
 using namespace std;
 
 stringstream GetStream();
+stringstream GetStreamNew();
+stringstream SmallTest();
+stringstream GetStreamNew_();
+stringstream TGTest();
 
 void TestAll();

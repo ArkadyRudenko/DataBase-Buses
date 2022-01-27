@@ -25,7 +25,7 @@ void BaseBuses::AddStop(const BusStop &busStop) {
         if (auto other_stop = name_in_stop.find(stop.first); other_stop != name_in_stop.end()) {
             other_stop->second.AddLength({busStop.name, stop.second});
         } else {
-            BusStop new_bus_stop(stop.first, -1, -1); // later will be new values, other_stop`s tmp
+            BusStop new_bus_stop(stop.first, -181, -181); // later will be new values, other_stop`s tmp
             new_bus_stop.AddLength({busStop.name, stop.second});
             name_in_stop.insert({stop.first, new_bus_stop});
         }
@@ -44,14 +44,14 @@ void BaseBuses::AddBus(const string bus,
         ));
     }
     BusInfo busInfo(busInfoList, route);
-    busInfo.setRealLength(calcRealLength(busInfoList));
-    busInfo.setCurvature(calcCurvature(busInfoList,busInfo.getRealLength()));
+    busInfo.setRealLength(calcRealLength(busInfo.getListStops()));
+    busInfo.setCurvature(calcCurvature(busInfo.getListStops(), busInfo.getRealLength()));
     busInfo.setCountUniqueStops(calcUniqueStops(busInfoList));
     //???????????????????
     buses.insert({bus, busInfo});
 }
 
-optional<const set<string>> BaseBuses::GetInfoStop(const std::string &stop) {
+optional<const set<string>> BaseBuses::GetInfoStop(const string &stop) {
     if (auto it = stop_in_buses.find(stop); it == stop_in_buses.end()) {
         return nullopt;
     } else {
@@ -94,12 +94,12 @@ int BaseBuses::calcUniqueStops(const StopsList &stopsList) {
     return names.size();
 }
 
-double BaseBuses::calcCurvature(const StopsList &stopsList, int64_t real_length) {
+double BaseBuses::calcCurvature(const StopsList &stopsList, int real_length) {
     return (real_length * 1.) / (calcLength(stopsList) * 1.);
 }
 
-int64_t BaseBuses::calcRealLength(const StopsList &stopsList) {
-    int64_t sum = 0;
+int BaseBuses::calcRealLength(const StopsList &stopsList) {
+    int sum = 0;
     for (int i = 0; i < stopsList.size() - 1; i++) {
         sum += (stopsList[i]->GetLengthByStop(stopsList[i + 1]->name));
     }
