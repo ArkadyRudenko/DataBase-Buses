@@ -22,24 +22,17 @@ public:
 
     Route getRoute() const;
 
-    int64_t getRealLength() const;
-
-    void setRealLength(int64_t realLength);
+    int getRealLength() const;
 
     double getCurvature() const;
-
-    void setCurvature(double curvature);
-
     int getCountUniqueStops() const;
 
-    void setCountUniqueStops(int countUniqueStops);
-
-    size_t GetCountStops() const ;
+    int GetCountStops() const ;
 
 private:
     StopsList busStops_;
     Route route_;
-    int64_t real_length;
+    int real_length;
     double curvature;
     int count_unique_stops;
 };

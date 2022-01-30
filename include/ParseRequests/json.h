@@ -2,6 +2,7 @@
 
 #include <istream>
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <string>
 #include <variant>
@@ -15,8 +16,37 @@ namespace Json {
             std::string,
             double,
             bool> {
+    private:
+        template <typename Z>
+        const Z& GetType() const {
+            return std::get<Z>(*this);
+        }
+        bool is_empty;
     public:
         using variant::variant;
+
+        Node() {
+            is_empty = true;
+        };
+
+        template<typename T>
+        void push_back(std::string key, T value) {
+            if((*this).HasType<std::map<std::string, Node>>()) {
+                get<std::map<std::string, Node>>(*this).insert({key, value});
+            } else if(is_empty) {
+                std::stringstream ss;
+                ss << "{}";
+                std::map<std::string, Node> result;
+                *this = result;
+                this->push_back(key, value);
+            }
+            is_empty = false;
+        }
+        void push_back(double item);
+        void push_back(int item);
+        void push_back(Node);
+        void push_back(std::string);
+        void push_back(bool);
 
         const auto &AsArray() const {
             return std::get<std::vector<Node>>(*this);

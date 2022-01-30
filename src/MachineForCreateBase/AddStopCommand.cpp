@@ -2,22 +2,18 @@
 
 #include "AddStopCommand.h"
 #include "BaseBuses.h"
-#include "PasreRequests.h"
 
 using namespace std;
 using namespace Json;
 
 void AddStopCommand::Execute(BaseBuses &baseBuses,
                              const map<string, Node>& stop) {
-//    cout << stop.at("latitude").AsDouble() << "  " <<
-//            stop.at("longitude").AsDouble() << '\n';
     BusStop busStop(stop.at("name").AsString(),
                     stop.at("latitude").AsDouble(),
                     stop.at("longitude").AsDouble());
     try {
         busStop.setLengths(CreateMapStops(stop.at("road_distances").AsMap()));
-    } catch (out_of_range& exp) {
-    }
+    } catch (out_of_range& exp) {}
 
     baseBuses.AddStop(busStop);
 }

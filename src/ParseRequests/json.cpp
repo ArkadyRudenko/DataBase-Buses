@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "json.h"
 
 using namespace std;
@@ -87,70 +89,130 @@ namespace Json {
         } else {
             return Node(static_cast<int>(strtol(result.c_str(), nullptr, 10)));
         }
-}
-
-Node LoadBool(istream &input) {
-    char ch;
-    if ((ch = input.get()) == 't' and
-        input.get() == 'r' and
-        input.get() == 'u' and
-        input.get() == 'e') {
-        return Node(true);
-    } else if (ch == 'f' and
-               input.get() == 'a' and
-               input.get() == 'l' and
-               input.get() == 's' and
-               input.get() == 'e') {
-        return Node(false);
     }
-}
 
-Node LoadString(istream &input) {
-    string line;
-    getline(input, line, '"');
-    return Node(move(line));
-}
+    Node LoadBool(istream &input) {
+        char ch;
+        if ((ch = input.get()) == 't' and
+            input.get() == 'r' and
+            input.get() == 'u' and
+            input.get() == 'e') {
+            return Node(true);
+        } else if (ch == 'f' and
+                   input.get() == 'a' and
+                   input.get() == 'l' and
+                   input.get() == 's' and
+                   input.get() == 'e') {
+            return Node(false);
+        }
+    }
 
-Node LoadDict(istream &input) {
-    map<string, Node> result;
+    Node LoadString(istream &input) {
+        string line;
+        getline(input, line, '"');
+        return Node(move(line));
+    }
 
-    for (char c; input >> c && c != '}';) {
-        if (c == ',') {
+    Node LoadDict(istream &input) {
+        map<string, Node> result;
+
+        for (char c; input >> c && c != '}';) {
+            if (c == ',') {
+                input >> c;
+            }
+
+            string key = LoadString(input).AsString();
             input >> c;
+            result.emplace(move(key), LoadNode(input));
         }
 
-        string key = LoadString(input).AsString();
+        return Node(move(result));
+    }
+
+    Node LoadNode(istream &input) {
+        char c;
         input >> c;
-        result.emplace(move(key), LoadNode(input));
+
+        if (c == '[') {
+            return LoadArray(input);
+        } else if (c == '{') {
+            return LoadDict(input);
+        } else if (c == '"') {
+            return LoadString(input);
+        } else if (c == '-' or isdigit(c)) {
+            input.putback(c);
+            return LoadDouble(input);
+        } else if (c == 'f' or c == 't') {
+            input.putback(c);
+            return LoadBool(input);
+        } else {
+            input.putback(c);
+            return LoadInt(input);
+        }
     }
 
-    return Node(move(result));
-}
-
-Node LoadNode(istream &input) {
-    char c;
-    input >> c;
-
-    if (c == '[') {
-        return LoadArray(input);
-    } else if (c == '{') {
-        return LoadDict(input);
-    } else if (c == '"') {
-        return LoadString(input);
-    } else if (c == '-' or isdigit(c)) {
-        input.putback(c);
-        return LoadDouble(input);
-    } else if (c == 'f' or c == 't') {
-        input.putback(c);
-        return LoadBool(input);
-    } else {
-        input.putback(c);
-        return LoadInt(input);
+    void Node::push_back(double item) {
+        if ((*this).HasType<vector<Node>>()) {
+            get<std::vector<Node>>(*this).emplace_back(item);
+        } else if (is_empty) {
+            stringstream ss;
+            ss << "[]";
+            *this = LoadNode(ss);
+            this->push_back(item);
+        }
+        is_empty = false;
     }
-}
 
-Document Load(istream &input) {
-    return Document{LoadNode(input)};
-}
+    void Node::push_back(int item) {
+        if ((*this).HasType<vector<Node>>()) {
+            get<std::vector<Node>>(*this).emplace_back(item);
+        } else if (is_empty) {
+            stringstream ss;
+            ss << "[]";
+            *this = Json::LoadNode(ss);
+            this->push_back(item);
+        }
+        is_empty = false;
+    }
+
+    void Node::push_back(Node item) {
+        if ((*this).HasType<vector<Node>>()) {
+            get<std::vector<Node>>(*this).emplace_back(item);
+        } else if (is_empty) {
+            stringstream ss;
+            ss << "[]";
+            *this = LoadNode(ss);
+            this->push_back(item);
+        }
+        is_empty = false;
+    }
+
+    void Node::push_back(std::string item) {
+        if ((*this).HasType<vector<Node>>()) {
+            get<std::vector<Node>>(*this).emplace_back(item);
+        } else if (is_empty) {
+            stringstream ss;
+            ss << "[]";
+            *this = LoadNode(ss);
+            this->push_back(item);
+        }
+        is_empty = false;
+    }
+
+    void Node::push_back(bool item) {
+        if ((*this).HasType<vector<Node>>()) {
+            get<std::vector<Node>>(*this).emplace_back(item);
+        } else if (is_empty) {
+            stringstream ss;
+            ss << "[]";
+            *this = LoadNode(ss);
+            this->push_back(item);
+        }
+        is_empty = false;
+    }
+
+    Document Load(istream &input) {
+        return Document{LoadNode(input)};
+    }
 
 }

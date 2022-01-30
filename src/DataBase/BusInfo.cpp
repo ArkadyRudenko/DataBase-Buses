@@ -3,6 +3,7 @@
 #include <iterator>
 
 #include "BusInfo.h"
+#include "CalcDistance.h"
 
 using namespace std;
 //namespace rng = std::ranges;
@@ -24,36 +25,23 @@ BusInfo::BusInfo(StopsList busStops, Route route)
         } // TODO rng
         move(second_part.begin(), second_part.end(), back_inserter(busStops_));
     }
+    real_length = calcRealLength(busStops_);
+    curvature = calcCurvature(busStops_, real_length);
+    count_unique_stops = calcUniqueStops(busStops_);
 }
 
-int64_t BusInfo::getRealLength() const {
+int BusInfo::getRealLength() const {
     return real_length;
-}
-
-void BusInfo::setRealLength(int64_t realLength) {
-    real_length = realLength;
 }
 
 double BusInfo::getCurvature() const {
     return curvature;
 }
 
-void BusInfo::setCurvature(double curvature) {
-    BusInfo::curvature = curvature;
-}
-
 int BusInfo::getCountUniqueStops() const {
     return count_unique_stops;
 }
 
-void BusInfo::setCountUniqueStops(int countUniqueStops) {
-    count_unique_stops = countUniqueStops;
-}
-
-size_t BusInfo::GetCountStops() const {
+int BusInfo::GetCountStops() const {
     return busStops_.size();
 }
-
-
-
-

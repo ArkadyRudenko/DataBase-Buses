@@ -4,6 +4,7 @@ project(BaseBuses)
 
 
 include_directories(include/DataBase)
+include_directories(include/DataBase/Graph)
 include_directories(include/MachineForCreateBase)
 include_directories(include/ParseRequests)
 include_directories(include/ProcessingBase)

@@ -7,31 +7,19 @@ using namespace Json;
 
 namespace StateListening {
     void GetStopInfo::Listen(BaseBuses &baseBuses,
-                             const map<string, Node>&id_stop, ostream &os) {
-        stringstream ss;
+                             const map<string, Node> &id_stop, ostream &os) {
         Node res;
+        res.push_back("request_id"s, id_stop.at("id").AsInt());
         if (const auto stop_from_base = baseBuses.GetInfoStop(id_stop.at("name").AsString())) {
-            ss << "{\n";
-            ss << R"("buses": [)";
-            int i = 0, size = stop_from_base->size();
+            Node buses;
             for (const auto &stop: *stop_from_base) {
-                ss << "\""<< stop << "\"";
-                if (i != size - 1) {
-                    ss << ", ";
-                }
-                i++;
+                buses.push_back(stop);
             }
-            ss << "]\n";
-            ss << R"("request_id":)" << id_stop.at("id").AsInt();
-            ss << "}\n";
+            res.push_back("buses"s, buses);
+
         } else {
-            ss << "{";
-            ss << R"("request_id":)";
-            ss << id_stop.at("id").AsInt();
-            ss << R"(, "error_message": "not found")";
-            ss << "}";
+            res.push_back("error_message"s, "not found"s);
         }
-        res = Load(ss).GetRoot();
         os << res;
     }
 }

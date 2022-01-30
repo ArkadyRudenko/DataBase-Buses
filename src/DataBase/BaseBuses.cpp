@@ -1,11 +1,10 @@
-#include <cmath>
 #include <sstream>
-#include <iomanip>
 #include <algorithm>
 #include <optional>
 #include <map>
 
 #include "BaseBuses.h"
+#include "CalcDistance.h"
 
 using namespace std;
 //namespace rng = std::ranges;
@@ -33,8 +32,8 @@ void BaseBuses::AddStop(const BusStop &busStop) {
 }
 
 
-void BaseBuses::AddBus(const string bus,
-                       const vector<string> stops, Route route) {
+void BaseBuses::AddBus(const string& bus,
+                       const vector<string>& stops, Route route) {
     StopsList busInfoList;
 
     for (auto &stop: stops) {
@@ -43,12 +42,7 @@ void BaseBuses::AddBus(const string bus,
                 name_in_stop.find(stop)->second
         ));
     }
-    BusInfo busInfo(busInfoList, route);
-    busInfo.setRealLength(calcRealLength(busInfo.getListStops()));
-    busInfo.setCurvature(calcCurvature(busInfo.getListStops(), busInfo.getRealLength()));
-    busInfo.setCountUniqueStops(calcUniqueStops(busInfoList));
-    //???????????????????
-    buses.insert({bus, busInfo});
+    buses.insert({bus, BusInfo(move(busInfoList), route)});
 }
 
 optional<const set<string>> BaseBuses::GetInfoStop(const string &stop) {
@@ -65,43 +59,4 @@ optional<const BusInfo> BaseBuses::GetInfoBus(const string &bus) {
     } else {
         return it->second; // copy
     }
-}
-
-double BaseBuses::calcLength(StopsList stopsList) {
-    double sum = 0;
-    for (size_t i = 0; i < stopsList.size() - 1; i++) {
-        sum += calcLengthBetweenTwoStops(stopsList[i].get(), stopsList[i + 1].get());
-    }
-    return sum;
-}
-
-double BaseBuses::calcLengthBetweenTwoStops(const BusStop *lhs, const BusStop *rhs) {
-    return EARTH_RADIUS *
-           acos(sin(calcRadians(lhs->latitude)) * sin(calcRadians(rhs->latitude)) +
-                cos(calcRadians(lhs->latitude)) * cos(calcRadians(rhs->latitude))
-                * cos(abs(calcRadians(lhs->longitude) - calcRadians(rhs->longitude))));
-}
-
-double BaseBuses::calcRadians(double value) {
-    return (value * PI) / 180;
-}
-
-int BaseBuses::calcUniqueStops(const StopsList &stopsList) {
-    map<string, int> names;
-    for (const auto &stop: stopsList) {
-        names[stop->name] = 0;
-    }
-    return names.size();
-}
-
-double BaseBuses::calcCurvature(const StopsList &stopsList, int real_length) {
-    return (real_length * 1.) / (calcLength(stopsList) * 1.);
-}
-
-int BaseBuses::calcRealLength(const StopsList &stopsList) {
-    int sum = 0;
-    for (int i = 0; i < stopsList.size() - 1; i++) {
-        sum += (stopsList[i]->GetLengthByStop(stopsList[i + 1]->name));
-    }
-    return sum;
 }
