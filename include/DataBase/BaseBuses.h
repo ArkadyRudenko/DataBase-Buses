@@ -19,6 +19,8 @@ public:
 
     std::optional<const std::set<std::string>> GetInfoStop(const std::string&);
 
+    std::optional<int> GetInfoRoute();
+
 private:
     std::unordered_map<std::string, BusInfo> buses;
     std::unordered_map<std::string, BusStop> name_in_stop;

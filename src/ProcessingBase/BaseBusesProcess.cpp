@@ -27,5 +27,6 @@ MapStates CreateMapStates() {
     MapStates mapStates;
     mapStates.insert({"Bus", make_shared<GetBusInfo>()});
     mapStates.insert({"Stop", make_shared<GetStopInfo>()});
+    mapStates.insert({"Route", make_shared<GetStopInfo>()});
     return mapStates;
 }

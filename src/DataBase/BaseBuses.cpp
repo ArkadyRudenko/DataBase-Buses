@@ -60,3 +60,7 @@ optional<const BusInfo> BaseBuses::GetInfoBus(const string &bus) {
         return it->second; // copy
     }
 }
+
+std::optional<int> BaseBuses::GetInfoRoute() {
+    return 0;
+}

@@ -1,4 +1,4 @@
-#include "iomanip"
+#include <cassert>
 
 #include "AddStopCommand.h"
 #include "BaseBuses.h"
@@ -21,6 +21,7 @@ void AddStopCommand::Execute(BaseBuses &baseBuses,
 unordered_map<string, int> CreateMapStops(const map<string, Node> &stops) {
     unordered_map<string, int> res;
     for (const auto&[key, value]: stops) {
+        assert(value.AsInt() >= 0);
         res.insert({key, value.AsInt()});
     }
     return res;
