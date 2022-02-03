@@ -1,9 +1,8 @@
 #pragma once
+
 //
 // Created by arkady on 30.01.2022.
 //
-
-#include "Graph.h"
 
 #include <algorithm>
 #include <cassert>
@@ -13,6 +12,8 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#include "Graph.h"
 
 namespace Graph {
 

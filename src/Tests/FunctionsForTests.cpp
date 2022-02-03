@@ -22,7 +22,8 @@ string GoBaseBuses(stringstream& input) {
     auto requests = Load(input).GetRoot().AsMap();
     BaseBuses baseBuses = BaseBusesBuilder()
             .BuildBase(
-                    requests["base_requests"]
+                    requests["base_requests"].AsArray(),
+                    requests["routing_settings"].AsMap()
             );
     stringstream output;
     BaseBusesProcess(baseBuses, requests["stat_requests"], output);

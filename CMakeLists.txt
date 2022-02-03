@@ -9,6 +9,7 @@ include_directories(include/MachineForCreateBase)
 include_directories(include/ParseRequests)
 include_directories(include/ProcessingBase)
 include_directories(include/Tests)
+include_directories(include/Tests/Resources)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 

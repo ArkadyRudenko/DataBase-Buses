@@ -1,3 +1,5 @@
+#pragma once
+
 #include "StateListen.h"
 #include "json.h"
 

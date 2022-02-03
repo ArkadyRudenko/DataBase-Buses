@@ -2,6 +2,7 @@
 #include "StateListen.h"
 #include "GetBusInfo.h"
 #include "GetStopInfo.h"
+#include "GetRouteInfo.h"
 
 using namespace std;
 using namespace Json;
@@ -27,6 +28,6 @@ MapStates CreateMapStates() {
     MapStates mapStates;
     mapStates.insert({"Bus", make_shared<GetBusInfo>()});
     mapStates.insert({"Stop", make_shared<GetStopInfo>()});
-    mapStates.insert({"Route", make_shared<GetStopInfo>()});
+    mapStates.insert({"Route", make_shared<GetRouteInfo>()});
     return mapStates;
 }

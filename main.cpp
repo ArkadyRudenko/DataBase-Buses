@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ranges>
 #include <algorithm>
+#include <map>
 
 #include "BaseBusesBuilder.h"
 #include "BaseBusesProcess.h"
@@ -15,11 +16,12 @@ int main() {
     TestAll();
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
+//
 //    auto requests = Load(cin).GetRoot().AsMap();
 //    BaseBuses baseBuses = BaseBusesBuilder()
 //            .BuildBase(
-//                    requests["base_requests"]
+//                    requests["base_requests"].AsArray(),
+//                    requests["routing_settings"].AsMap()
 //                    );
 //
 //    BaseBusesProcess(baseBuses, requests["stat_requests"]);

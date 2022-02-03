@@ -32,7 +32,7 @@ namespace Json {
         template<typename T>
         void push_back(std::string key, T value) {
             if((*this).HasType<std::map<std::string, Node>>()) {
-                get<std::map<std::string, Node>>(*this).insert({key, value});
+                std::get<std::map<std::string, Node>>(*this).insert({key, value});
             } else if(is_empty) {
                 std::stringstream ss;
                 ss << "{}";
