@@ -13,7 +13,7 @@ include_directories(include/Tests/Resources)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-add_executable(${PROJECT_NAME} main.cpp ${SOURCES})
+add_executable(${PROJECT_NAME} main.cpp ${SOURCES} include/Tests/Resources/test4_exp.h)
 
 set_target_properties(
         ${PROJECT_NAME} PROPERTIES

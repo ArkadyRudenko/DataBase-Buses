@@ -19,7 +19,6 @@ namespace Json {
                 if (i != size - 1) {
                     os << ',';
                 }
-//                os << '\n';
                 i++;
             }
             os << "}";
@@ -32,19 +31,34 @@ namespace Json {
         } else if (node.HasType<bool>()) {
             os << (node.AsBool() ? "true" : "false");
         } else if (node.HasType<vector<Node>>()) {
-            os << "["; // \n
+            os << "[";
             int i = 0, size = node.AsArray().size();
             for (const auto &item: node.AsArray()) {
                 os << item;
                 if (i != size - 1) {
                     os << ',';
                 }
-//                os << '\n'; // \n
                 i++;
             }
             os << "]";
         }
         return os;
+    }
+
+    template <>
+    void PrintValue<Dict>(const Dict& dict, std::ostream& output) {
+        output << '{';
+        bool first = true;
+        for (const auto& [key, node]: dict) {
+            if (!first) {
+                output << ", ";
+            }
+            first = false;
+            PrintValue(key, output);
+            output << ": ";
+            output << node;
+        }
+        output << '}';
     }
 
     const Node &Document::GetRoot() const {

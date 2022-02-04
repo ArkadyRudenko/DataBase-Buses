@@ -1,4 +1,3 @@
-#include <ranges>
 #include <algorithm>
 #include <iterator>
 
@@ -6,7 +5,6 @@
 #include "CalcDistance.h"
 
 using namespace std;
-//namespace rng = std::ranges;
 
 const StopsList &BusInfo::getListStops() const {
     return busStops_;
@@ -22,7 +20,7 @@ BusInfo::BusInfo(StopsList busStops, Route route)
         StopsList second_part;
         for (int i = busStops_.size() - 2; i >= 0; i--) {
             second_part.push_back(busStops_[i]);
-        } // TODO rng
+        }
         move(second_part.begin(), second_part.end(), back_inserter(busStops_));
     }
     real_length = calcRealLength(busStops_);

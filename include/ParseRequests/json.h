@@ -10,8 +10,11 @@
 
 namespace Json {
 
+    class Node;
+    using Dict = std::map<std::string, Node>;
+
     class Node : std::variant<std::vector<Node>,
-            std::map<std::string, Node>,
+            Dict,
             int,
             std::string,
             double,
@@ -102,4 +105,12 @@ namespace Json {
     Document Load(std::istream &input = std::cin);
 
     std::ostream& operator<<(std::ostream& os, const Node& dt);
+
+    template <typename Value>
+    void PrintValue(const Value& value, std::ostream& output) {
+        output << value;
+    }
+
+    template <>
+    void PrintValue<Dict>(const Dict& dict, std::ostream& output);
 }

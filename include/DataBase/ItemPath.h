@@ -5,16 +5,23 @@
 #ifndef BASEBUSES_ITEMPATH_H
 #define BASEBUSES_ITEMPATH_H
 
-enum EdgeType {
-    WAIT = 0,
-    BUS
-};
+#include <variant>
 
-struct ItemPath {
-    EdgeType type;
-    std::string name{};
-    size_t span_count{};
-    double time{};
+struct RouteInfo {
+    double total_time;
+
+    struct BusItem {
+        std::string bus_name;
+        double time;
+        size_t span_count;
+    };
+    struct WaitItem {
+        std::string stop_name;
+        double time;
+    };
+
+    using Item = std::variant<BusItem, WaitItem>;
+    std::vector<Item> items;
 };
 
 #endif //BASEBUSES_ITEMPATH_H

@@ -2,12 +2,10 @@
 #include <sstream>
 #include <algorithm>
 #include <optional>
-#include <map>
 
 #include "BaseBuses.h"
 
 using namespace std;
-//namespace rng = std::ranges;
 
 void BaseBuses::AddStop(const BusStop &busStop) {
     if (auto it = name_in_stop.find(busStop.name); it != name_in_stop.end()) { // bad process
@@ -44,7 +42,7 @@ void BaseBuses::AddBus(const string &bus,
     buses.insert({bus, BusInfo(move(busInfoList), route)});
 }
 
-optional<const set<string>> BaseBuses::GetInfoStop(const string &stop) {
+optional<const set<string>> BaseBuses::GetInfoStop(const string &stop) const {
     if (auto it = stop_in_buses.find(stop); it == stop_in_buses.end()) {
         return nullopt;
     } else {
@@ -52,7 +50,7 @@ optional<const set<string>> BaseBuses::GetInfoStop(const string &stop) {
     }
 }
 
-optional<const BusInfo> BaseBuses::GetInfoBus(const string &bus) {
+optional<const BusInfo> BaseBuses::GetInfoBus(const string &bus) const {
     if (auto it = buses.find(bus); it == buses.end()) {
         return nullopt;
     } else {
@@ -60,28 +58,26 @@ optional<const BusInfo> BaseBuses::GetInfoBus(const string &bus) {
     }
 }
 
-std::optional<vector<ItemPath>> BaseBuses::GetInfoRoute(const string &from, const string &to) {
-    size_t first_stop = id_stops[from];
-    size_t second_stop = id_stops[to];
-    vector<ItemPath> result;
-    if (auto routeInfo = router->BuildRoute(first_stop, second_stop)) {
-        for (size_t i = 0; i < routeInfo->edge_count; i++) {
-            Graph::EdgeId id = router->GetRouteEdge(routeInfo->id, i);
-            if (id_in_edge_info[id].first.from % 2 == 0) {
-                string name_wait_stop = id_stop_in_name_stop.at(id_in_edge_info[id].first.from); // == ??
-                double time = route_settings.waiting_minutes;
-                result.push_back({EdgeType::WAIT, name_wait_stop, 0, time});
+optional<RouteInfo> BaseBuses::GetInfoRoute(const string &from, const string &to) const {
+    if (auto route = router->BuildRoute(id_stops.at(from), id_stops.at(to))) {
+        RouteInfo route_info = {.total_time = route->weight};
+        for (size_t i = 0; i < route->edge_count; i++) {
+            Graph::EdgeId id = router->GetRouteEdge(route->id, i);
+            if (id_in_edge_info.at(id).first.from % 2 == 0) {
+                route_info.items.emplace_back(RouteInfo::WaitItem{
+                .stop_name = id_stop_in_name_stop.at(id_in_edge_info.at(id).first.from),
+                .time = static_cast<double>(route_settings.waiting_minutes),
+                });
             } else {
-                const string bus = id_edge_in_bus[id];
-                double time = id_in_edge_info[id].first.weight;
-                const StopsList &stops = buses.find(bus)->second.getListStops();
-                string name_begin = id_stop_in_name_stop.at(id_in_edge_info[id].first.from - 1);
-                string name_end = id_stop_in_name_stop[id_in_edge_info[id].first.to];
-                size_t span_count = id_in_edge_info[id].second;
-                result.push_back({EdgeType::BUS, bus, span_count, time});
+                route_info.items.emplace_back(RouteInfo::BusItem{
+                        .bus_name = id_edge_in_bus.at(id),
+                        .time = id_in_edge_info.at(id).first.weight,
+                        .span_count = id_in_edge_info.at(id).second,
+                });
             }
         }
-        return result;
+        router->ReleaseRoute(route->id);
+        return route_info;
     } else {
         return nullopt;
     }
@@ -110,9 +106,7 @@ void BaseBuses::BuildGraph() {
                 ]->getLengths();
 
                 weight += (next_stops.find(stops[j]->name)->second * 1. * 60. / (route_settings.speed_of_bus * 1000.));
-                if (bus.second.getRoute() == Route::ANNULAR and j != 0 and j < i) {
-
-                } else {
+                if (!(bus.second.getRoute() == Route::ANNULAR and j != 0 and j < i)) {
                     size_t id = graph->AddEdge({id_stops[stops[i]->name] + 1,
                                                 id_stops[stops[j]->name],
                                                 weight});
@@ -120,7 +114,6 @@ void BaseBuses::BuildGraph() {
                     id_in_edge_info[id] = {graph->GetEdge(id), stops_count};
                     id_edge_in_bus[id] = bus.first;
                 }
-
                 stops_count++;
             }
             size_t id = graph->AddEdge({(id_stops[stops[i]->name]),

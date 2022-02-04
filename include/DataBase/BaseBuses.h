@@ -15,17 +15,16 @@
 
 class BaseBuses {
 public:
-    explicit BaseBuses() = default;
 
     void AddBus(const std::string &, const std::vector<std::string> &, Route);
 
     void AddStop(const BusStop &);
 
-    std::optional<const BusInfo> GetInfoBus(const std::string &);
+    std::optional<const BusInfo> GetInfoBus(const std::string &) const;
 
-    std::optional<const std::set<std::string>> GetInfoStop(const std::string &);
+    std::optional<const std::set<std::string>> GetInfoStop(const std::string &) const;
 
-    std::optional<std::vector<ItemPath>> GetInfoRoute(const std::string& from, const std::string& to);
+    std::optional<RouteInfo> GetInfoRoute(const std::string&, const std::string&) const;
 
 private:
     std::unordered_map<std::string, BusInfo> buses;
@@ -41,6 +40,8 @@ private:
     std::unordered_map<std::string, size_t> id_stops;
     std::unordered_map<size_t, std::string> id_stop_in_name_stop;
     // ???
+
+    explicit BaseBuses() = default;
 
     friend class BaseBusesBuilder;
 
