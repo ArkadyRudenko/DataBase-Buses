@@ -67,7 +67,7 @@ namespace Json {
             return std::get<std::string>(*this);
         }
 
-        const double AsDouble() const {
+        double AsDouble() const {
             if(std::holds_alternative<int>(*this)) {
                 return static_cast<double>(std::get<int>(*this));
             } else {

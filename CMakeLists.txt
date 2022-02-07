@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(BaseBuses)
 
+SET(MYCOMPILE_FLAGS "-Wall -Wextra")
+#SET(CMAKE_CXX_FLAGS ${MYCOMPILE_FLAGS})
 
 include_directories(include/DataBase)
 include_directories(include/DataBase/Graph)

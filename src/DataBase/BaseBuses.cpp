@@ -94,10 +94,10 @@ void BaseBuses::BuildGraph() {
     // hardly unreadable fucking code
     for (const auto &bus: buses) {
         const StopsList stops = bus.second.getListStops();
-        for (size_t i = 0; i < stops.size() - 1; i++) {
+        for (int i = 0; i < stops.size() - 1; i++) {
             double weight = 0;
             size_t stops_count = 1;
-            for (size_t j = (i + 1) % (stops.size() - 1);
+            for (int j = (i + 1) % (stops.size() - 1);
                  j != i;
                  j = (j + 1) % (stops.size() - 1)) {
 
