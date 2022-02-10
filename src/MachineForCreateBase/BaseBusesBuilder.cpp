@@ -15,16 +15,11 @@ BaseBuses BaseBusesBuilder::BuildBase(const vector<Node> &base_requests,
     BaseBuses baseBuses;
     CreateCommands();
 
-    baseBuses.setRouteSettings({route_settings.at("bus_wait_time").AsInt(),
-                                route_settings.at("bus_velocity").AsDouble()});
-
-
     for (const auto &req: GetSortedRequests(base_requests)) {
         commands[req->AsMap().at("type").AsString()]->Execute(baseBuses, req->AsMap());
     }
 
-    baseBuses.BuildGraph();
-    baseBuses.BuildRouter();
+    baseBuses.BuildRouter(route_settings);
 
     return baseBuses;
 }

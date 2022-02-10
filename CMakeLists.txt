@@ -6,6 +6,7 @@ SET(MYCOMPILE_FLAGS "-Wall -Wextra")
 #SET(CMAKE_CXX_FLAGS ${MYCOMPILE_FLAGS})
 
 include_directories(include/DataBase)
+include_directories(include/DataBase/Router)
 include_directories(include/DataBase/Graph)
 include_directories(include/MachineForCreateBase)
 include_directories(include/ParseRequests)

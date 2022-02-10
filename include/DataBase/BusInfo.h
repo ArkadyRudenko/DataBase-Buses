@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-#include "BusStop.h"
+#include "Stop.h"
 #include <memory>
 
 enum Route {
@@ -12,7 +12,7 @@ enum Route {
     STRAIGHT
 };
 
-using StopsList = std::vector<std::shared_ptr<BusStop>>;
+using StopsList = std::vector<std::shared_ptr<Stop>>;
 
 class BusInfo {
 public:

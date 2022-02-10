@@ -10,7 +10,7 @@ double calcLength(const StopsList& stopsList) {
     return sum;
 }
 
-double calcLengthBetweenTwoStops(const BusStop *lhs, const BusStop *rhs) {
+double calcLengthBetweenTwoStops(const Stop *lhs, const Stop *rhs) {
     return EARTH_RADIUS *
            acos(sin(calcRadians(lhs->latitude)) * sin(calcRadians(rhs->latitude)) +
                 cos(calcRadians(lhs->latitude)) * cos(calcRadians(rhs->latitude))

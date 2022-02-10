@@ -3,9 +3,9 @@
 #include <string>
 #include <unordered_map>
 
-class BusStop {
+class Stop {
 public:
-    BusStop(std::string, double latitude, double longitude);
+    Stop(std::string, double latitude, double longitude);
     std::string name;
     double latitude;
     double longitude;

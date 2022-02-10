@@ -43,7 +43,7 @@ namespace Graph {
         using IncidentEdgesRange = Range<typename IncidenceList::const_iterator>;
 
     public:
-        DirectedWeightedGraph(size_t vertex_count);
+        DirectedWeightedGraph(size_t vertex_count = 0);
         EdgeId AddEdge(const Edge<Weight>& edge);
 
         size_t GetVertexCount() const;

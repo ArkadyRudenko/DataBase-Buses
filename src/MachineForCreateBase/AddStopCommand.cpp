@@ -8,7 +8,7 @@ using namespace Json;
 
 void AddStopCommand::Execute(BaseBuses &baseBuses,
                              const map<string, Node>& stop) {
-    BusStop busStop(stop.at("name").AsString(),
+    Stop busStop(stop.at("name").AsString(),
                     stop.at("latitude").AsDouble(),
                     stop.at("longitude").AsDouble());
     try {

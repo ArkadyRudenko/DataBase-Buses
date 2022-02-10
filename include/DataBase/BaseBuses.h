@@ -9,55 +9,37 @@
 #include <string>
 
 #include "BusInfo.h"
+#include "TransportRouter.h"
 #include "Graph.h"
 #include "Router.h"
+#include "json.h"
 #include "ItemPath.h"
+
+using StopsDict = std::unordered_map<std::string, Stop>;
+using BusesDict = std::unordered_map<std::string, BusInfo>;
 
 class BaseBuses {
 public:
 
     void AddBus(const std::string &, const std::vector<std::string> &, Route);
 
-    void AddStop(const BusStop &);
+    void AddStop(const Stop &);
 
     std::optional<const BusInfo> GetInfoBus(const std::string &) const;
 
     std::optional<const std::set<std::string>> GetInfoStop(const std::string &) const;
 
-    std::optional<RouteInfo> GetInfoRoute(const std::string&, const std::string&) const;
+    std::optional<RouteInfo> GetInfoRoute(const std::string &, const std::string &) const;
 
 private:
-    std::unordered_map<std::string, BusInfo> buses;
-    std::unordered_map<std::string, BusStop> name_in_stop;
+    BusesDict buses;
+    StopsDict name_in_stop;
     std::unordered_map<std::string, std::set<std::string>> stop_in_buses;
 
-    std::unique_ptr<Graph::DirectedWeightedGraph<double>> graph;
-    std::unique_ptr<Graph::Router<double>> router;
-
-    // ???
-    std::map<size_t, std::string> id_edge_in_bus;
-    std::unordered_map<size_t, std::pair<Graph::Edge<double>, size_t>> id_in_edge_info;
-    std::unordered_map<std::string, size_t> id_stops;
-    std::unordered_map<size_t, std::string> id_stop_in_name_stop;
-    // ???
-
     explicit BaseBuses() = default;
+    void BuildRouter(const Json::Dict&);
+
+    std::unique_ptr<TransportRouter> router_;
 
     friend class BaseBusesBuilder;
-
-private:
-
-    struct RoutSettings {
-        int waiting_minutes;
-        double speed_of_bus;
-    };
-
-    RoutSettings route_settings;
-
-    void setRouteSettings(const RoutSettings &routeSettings) {
-        route_settings = routeSettings;
-    }
-
-    void BuildGraph();
-    void BuildRouter();
 };
