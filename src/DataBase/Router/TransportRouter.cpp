@@ -16,6 +16,7 @@ void TransportRouter::BuildGraph(const StopsDict &stops_dict,
         index += 2;
     }
     // hardly unreadable fucking code TODO
+    // see realisation Avtor`s
     for (const auto &bus: buses_dict) {
         const StopsList stops = bus.second.getListStops();
         for (int i = 0; i < stops.size() - 1; i++) {

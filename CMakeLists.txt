@@ -2,8 +2,21 @@ cmake_minimum_required(VERSION 3.20)
 
 project(BaseBuses)
 
-SET(MYCOMPILE_FLAGS "-Wall -Wextra")
-#SET(CMAKE_CXX_FLAGS ${MYCOMPILE_FLAGS})
+#SET(MYCOMPILE_FLAGS "-Wall -Wextra")
+
+set(Test 1)
+
+if(Test EQUAL 1)
+    message("I`m good")
+    set(CMAKE_C_COMPILER "clang++-9")
+    set(CMAKE_CXX_COMPILER "/usr/bin/clang++-9")
+
+    set(MYCOMPILE_FLAGS "-std=c++17 -pedantic  -fsanitize=address -g -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+    set(CMAKE_CXX_FLAGS ${MYCOMPILE_FLAGS})
+
+    add_definitions("-D GLIBCXX_DEBUG -D GLIBCXX_DEBUG_PEDANTIC")
+endif()
+
 
 include_directories(include/DataBase)
 include_directories(include/DataBase/Router)

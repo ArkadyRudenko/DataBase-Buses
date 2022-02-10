@@ -1,5 +1,6 @@
 #include <iostream>
 #include <ranges>
+#include <vector>
 #include <map>
 
 #include "BaseBusesBuilder.h"
