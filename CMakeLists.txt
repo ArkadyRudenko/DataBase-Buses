@@ -4,10 +4,10 @@ project(BaseBuses)
 
 #SET(MYCOMPILE_FLAGS "-Wall -Wextra")
 
-set(Test 1)
+set(Sanitizers 1)
 
-if(Test EQUAL 1)
-    message("I`m good")
+if(Sanitizers EQUAL 1)
+    message("Compile with Sanitizers")
     set(CMAKE_C_COMPILER "clang++-9")
     set(CMAKE_CXX_COMPILER "/usr/bin/clang++-9")
 
@@ -21,6 +21,8 @@ endif()
 include_directories(include/DataBase)
 include_directories(include/DataBase/Router)
 include_directories(include/DataBase/Graph)
+include_directories(include/DataBase/BusesMap)
+include_directories(include/SVG)
 include_directories(include/MachineForCreateBase)
 include_directories(include/ParseRequests)
 include_directories(include/ProcessingBase)

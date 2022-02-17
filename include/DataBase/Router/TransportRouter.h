@@ -39,11 +39,12 @@ private:
 
     RoutSettings route_settings_;
 
-    // ??
+    // --- ??
     std::map<size_t, std::string> id_edge_in_bus;
     std::unordered_map<size_t, std::pair<Graph::Edge<double>, size_t>> id_in_edge_info;
     std::unordered_map<std::string, size_t> id_stops;
     std::unordered_map<size_t, std::string> id_stop_in_name_stop;
+    // --- ??
 
     void BuildGraph(const StopsDict&, const BusesDict&);
     static RoutSettings MakeRoutingSettings(const Json::Dict&);

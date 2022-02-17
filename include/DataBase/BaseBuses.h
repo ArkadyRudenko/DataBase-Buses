@@ -9,11 +9,13 @@
 #include <string>
 
 #include "BusInfo.h"
-#include "TransportRouter.h"
 #include "Graph.h"
-#include "Router.h"
 #include "json.h"
 #include "ItemPath.h"
+#include "TransportRouter.h"
+#include "Router.h"
+#include "RouterMap.h"
+
 
 using StopsDict = std::unordered_map<std::string, Stop>;
 using BusesDict = std::unordered_map<std::string, BusInfo>;
@@ -31,6 +33,8 @@ public:
 
     std::optional<RouteInfo> GetInfoRoute(const std::string &, const std::string &) const;
 
+    std::string GetInfoMap() const;
+
 private:
     BusesDict buses;
     StopsDict name_in_stop;
@@ -38,8 +42,10 @@ private:
 
     explicit BaseBuses() = default;
     void BuildRouter(const Json::Dict&);
+    void SetRenderSettings(const Json::Dict&);
 
     std::unique_ptr<TransportRouter> router_;
+    std::unique_ptr<RouterMap> router_map_;
 
     friend class BaseBusesBuilder;
 };

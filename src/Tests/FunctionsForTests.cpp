@@ -23,9 +23,10 @@ string GoBaseBuses(stringstream& input) {
     BaseBuses baseBuses = BaseBusesBuilder()
             .BuildBase(
                     requests["base_requests"].AsArray(),
-                    requests["routing_settings"].AsMap()
+                    requests["routing_settings"].AsMap(),
+                    requests["render_settings"].AsMap()
             );
     stringstream output;
-    BaseBusesProcess(baseBuses, requests["stat_requests"], output);
+    output << BaseBusesProcess(baseBuses, requests["stat_requests"]);
     return RemoveSpaces(output);
 }

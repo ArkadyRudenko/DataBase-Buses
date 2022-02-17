@@ -3,11 +3,11 @@
 #include "StateListen.h"
 #include "json.h"
 
-namespace StateListening {
+namespace Requests {
 
     class GetBusInfo : public StateListen {
     public:
-        void Listen(BaseBuses&, const std::map<std::string, Json::Node>&, std::ostream&) override;
+        Json::Node Listen(BaseBuses&, const std::map<std::string, Json::Node>&) override;
     };
 
 }

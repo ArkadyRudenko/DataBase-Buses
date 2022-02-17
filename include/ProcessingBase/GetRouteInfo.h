@@ -7,11 +7,11 @@
 
 #include "StateListen.h"
 
-
-class GetRouteInfo : public StateListen {
-public:
-    void Listen(BaseBuses &buses, const std::map<std::string, Json::Node> &map, std::ostream &ostream) override;
-};
-
+namespace Requests {
+    class GetRouteInfo : public StateListen {
+    public:
+        Json::Node Listen(BaseBuses &buses, const std::map<std::string, Json::Node> &map) override;
+    };
+}
 
 #endif //BASEBUSES_GETROUTEINFO_H

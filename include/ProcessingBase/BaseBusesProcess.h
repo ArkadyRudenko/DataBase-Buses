@@ -5,10 +5,9 @@
 #include "StateListen.h"
 #include "json.h"
 
-void BaseBusesProcess(BaseBuses &baseBuses,
-                      const Json::Node&,
-                      std::ostream& os = std::cout);
+Json::Node BaseBusesProcess(BaseBuses &baseBuses,
+                      const Json::Node&);
 
-using MapStates = std::unordered_map<std::string, std::shared_ptr<StateListen>>;
+using MapStates = std::unordered_map<std::string, std::shared_ptr<Requests::StateListen>>;
 
 MapStates CreateMapStates();

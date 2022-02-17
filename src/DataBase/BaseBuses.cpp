@@ -67,3 +67,11 @@ void BaseBuses::BuildRouter(const Json::Dict& routing_settings_json) {
 std::optional<RouteInfo> BaseBuses::GetInfoRoute(const string &from, const string &to) const {
     return move(router_->GetInfoRoute(from, to));
 }
+
+std::string BaseBuses::GetInfoMap() const {
+    return "NULL";
+}
+
+void BaseBuses::SetRenderSettings(const Json::Dict &settings) {
+    router_map_ = make_unique<RouterMap>(settings);
+}

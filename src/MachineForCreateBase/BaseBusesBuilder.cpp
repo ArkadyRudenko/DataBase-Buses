@@ -11,14 +11,15 @@ using namespace Json;
 //namespace rng = std::ranges;
 
 BaseBuses BaseBusesBuilder::BuildBase(const vector<Node> &base_requests,
-                                      const map<string, Node> &route_settings) {
+                                      const map<string, Node> &route_settings,
+                                      const map<string, Node> &render_settings) {
     BaseBuses baseBuses;
     CreateCommands();
 
     for (const auto &req: GetSortedRequests(base_requests)) {
         commands[req->AsMap().at("type").AsString()]->Execute(baseBuses, req->AsMap());
     }
-
+    baseBuses.SetRenderSettings(render_settings);
     baseBuses.BuildRouter(route_settings);
 
     return baseBuses;
