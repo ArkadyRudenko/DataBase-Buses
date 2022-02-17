@@ -33,7 +33,7 @@ public:
 
     std::optional<RouteInfo> GetInfoRoute(const std::string &, const std::string &) const;
 
-    std::string GetInfoMap() const;
+    std::string_view GetInfoMap() const;
 
 private:
     BusesDict buses;
@@ -42,7 +42,7 @@ private:
 
     explicit BaseBuses() = default;
     void BuildRouter(const Json::Dict&);
-    void SetRenderSettings(const Json::Dict&);
+    void BuildMap(const Json::Dict& render_settings_json);
 
     std::unique_ptr<TransportRouter> router_;
     std::unique_ptr<RouterMap> router_map_;

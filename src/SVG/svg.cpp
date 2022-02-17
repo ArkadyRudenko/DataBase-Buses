@@ -73,10 +73,7 @@ namespace Svg {
         out << "</text>";
     }
 
-    template <typename ObjectType>
-    void Document::Add(ObjectType object) {
-        objects_.push_back(std::make_unique<ObjectType>(std::move(object)));
-    }
+
 
     Circle &Circle::SetCenter(Point centre_) {
         centre = centre_;

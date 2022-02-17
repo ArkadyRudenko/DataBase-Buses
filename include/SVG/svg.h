@@ -145,7 +145,9 @@ namespace Svg {
     class Document : public Object {
     public:
         template <typename ObjectType>
-        void Add(ObjectType object);
+        void Add(ObjectType object) {
+            objects_.push_back(std::make_unique<ObjectType>(std::move(object)));
+        }
 
         void Render(std::ostream& out) const override;
 

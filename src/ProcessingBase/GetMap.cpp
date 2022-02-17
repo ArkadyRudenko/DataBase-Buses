@@ -12,7 +12,7 @@ namespace Requests {
     Node GetMap::Listen(BaseBuses &baseBuses, const std::map<std::string, Json::Node> &id_map) {
         Dict dict;
 //        res["id"] = id_map.at("id").AsInt();
-        dict["map"] = baseBuses.GetInfoMap();
+        dict["map"] = string(baseBuses.GetInfoMap());
         return Node(dict);
     }
 

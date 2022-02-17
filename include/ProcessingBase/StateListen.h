@@ -9,5 +9,6 @@ namespace Requests {
     class StateListen {
     public:
         virtual Json::Node Listen(BaseBuses &, const std::map<std::string, Json::Node> &) = 0;
+        virtual ~StateListen() = default;
     };
 }

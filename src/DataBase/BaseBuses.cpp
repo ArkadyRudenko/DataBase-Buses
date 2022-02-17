@@ -68,10 +68,10 @@ std::optional<RouteInfo> BaseBuses::GetInfoRoute(const string &from, const strin
     return move(router_->GetInfoRoute(from, to));
 }
 
-std::string BaseBuses::GetInfoMap() const {
-    return "NULL";
+std::string_view BaseBuses::GetInfoMap() const {
+    return router_map_->GetSvgDoc();
 }
 
-void BaseBuses::SetRenderSettings(const Json::Dict &settings) {
-    router_map_ = make_unique<RouterMap>(settings);
+void BaseBuses::BuildMap(const Json::Dict &render_settings_json) {
+    router_map_ = make_unique<RouterMap>(name_in_stop, buses, render_settings_json);
 }
