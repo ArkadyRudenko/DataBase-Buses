@@ -80,29 +80,28 @@ namespace Json {
         return Node(move(result));
     }
 
-    Node LoadInt(istream &input) {
-        int result = 0;
+    Node LoadNumber(istream& input) {
+        bool is_negative = false;
+        if (input.peek() == '-') {
+            is_negative = true;
+            input.get();
+        }
+        int int_part = 0;
         while (isdigit(input.peek())) {
-            result *= 10;
-            result += input.get() - '0';
+            int_part *= 10;
+            int_part += input.get() - '0';
         }
-        return Node(result);
-    }
-
-    Node LoadDouble(istream &input) {
-        string result;
-        bool is_double = false;
-        while (isdigit(input.peek()) || input.peek() == '.' || input.peek() == '-') {
-            if (input.peek() == '.') {
-                is_double = true;
-            }
-            result += input.get();
+        if (input.peek() != '.') {
+            return Node(int_part * (is_negative ? -1 : 1));
         }
-        if (is_double) {
-            return Node(strtod(result.c_str(), nullptr));
-        } else {
-            return Node(static_cast<int>(strtol(result.c_str(), nullptr, 10)));
+        input.get();  // '.'
+        double result = int_part;
+        double frac_mult = 0.1;
+        while (isdigit(input.peek())) {
+            result += frac_mult * (input.get() - '0');
+            frac_mult /= 10;
         }
+        return Node(result * (is_negative ? -1 : 1));
     }
 
     Node LoadBool(istream &input) {
@@ -153,76 +152,13 @@ namespace Json {
             return LoadDict(input);
         } else if (c == '"') {
             return LoadString(input);
-        } else if (c == '-' or isdigit(c)) {
-            input.putback(c);
-            return LoadDouble(input);
-        } else if (c == 'f' or c == 't') {
+        } else if (c == 't' || c == 'f') {
             input.putback(c);
             return LoadBool(input);
         } else {
             input.putback(c);
-            return LoadInt(input);
+            return LoadNumber(input);
         }
-    }
-
-    void Node::push_back(double item) {
-        if ((*this).HasType<vector<Node>>()) {
-            get<std::vector<Node>>(*this).emplace_back(item);
-        } else if (is_empty) {
-            stringstream ss;
-            ss << "[]";
-            *this = LoadNode(ss);
-            this->push_back(item);
-        }
-        is_empty = false;
-    }
-
-    void Node::push_back(int item) {
-        if ((*this).HasType<vector<Node>>()) {
-            get<std::vector<Node>>(*this).emplace_back(item);
-        } else if (is_empty) {
-            stringstream ss;
-            ss << "[]";
-            *this = Json::LoadNode(ss);
-            this->push_back(item);
-        }
-        is_empty = false;
-    }
-
-    void Node::push_back(Node item) {
-        if ((*this).HasType<vector<Node>>()) {
-            get<std::vector<Node>>(*this).emplace_back(item);
-        } else if (is_empty) {
-            stringstream ss;
-            ss << "[]";
-            *this = LoadNode(ss);
-            this->push_back(item);
-        }
-        is_empty = false;
-    }
-
-    void Node::push_back(std::string item) {
-        if ((*this).HasType<vector<Node>>()) {
-            get<std::vector<Node>>(*this).emplace_back(item);
-        } else if (is_empty) {
-            stringstream ss;
-            ss << "[]";
-            *this = LoadNode(ss);
-            this->push_back(item);
-        }
-        is_empty = false;
-    }
-
-    void Node::push_back(bool item) {
-        if ((*this).HasType<vector<Node>>()) {
-            get<std::vector<Node>>(*this).emplace_back(item);
-        } else if (is_empty) {
-            stringstream ss;
-            ss << "[]";
-            *this = LoadNode(ss);
-            this->push_back(item);
-        }
-        is_empty = false;
     }
 
     Document Load(istream &input) {

@@ -26,10 +26,14 @@ private:
 private:
     RenderSettings settings;
     std::string result_svg;
+
+
 };
 
-Svg::Point MakePoint(const std::vector<Json::Node> &);
-Svg::Color MakeColor(const std::vector<Json::Node> &);
-std::vector<Svg::Color> MakePaletteColor(const std::vector<Json::Node> &);
+std::vector<std::string> MakeLayers(const Json::Node &node);
+Svg::Point MakePoint(const Json::Node &);
+Svg::Color MakeColor(const Json::Node &);
+Svg::Color MakeRgbColor(const std::vector<Json::Node> &);
+std::vector<Svg::Color> MakePaletteColor(const Json::Node &);
 
 #endif //BASEBUSES_ROUTERMAP_H

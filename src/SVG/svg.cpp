@@ -67,13 +67,14 @@ namespace Svg {
         if (font_family_) {
             out << "font-family=\"" << *font_family_ << "\" ";
         }
+        if(font_weight_) {
+            out << "font-weight=\"" << *font_weight_ << "\" ";
+        }
         Figure::RenderAttrs(out);
         out << ">";
         out << text;
         out << "</text>";
     }
-
-
 
     Circle &Circle::SetCenter(Point centre_) {
         centre = centre_;
@@ -126,4 +127,8 @@ namespace Svg {
         return *this;
     }
 
+    Text &Text::SetFontWeight(const std::string &font_weight) {
+        font_weight_ = font_weight;
+        return *this;
+    }
 }

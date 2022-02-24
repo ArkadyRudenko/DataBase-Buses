@@ -21,6 +21,9 @@ struct RenderSettings {
     Svg::Color underlayer_color;
     double underlayer_width;
     std::vector<Svg::Color> color_palette;
+    size_t bus_label_font_size;
+    Svg::Point bus_label_offset;
+    std::vector<std::string> layers;
 };
 
 

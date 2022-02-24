@@ -11,9 +11,10 @@ namespace Requests {
         Dict dict;
         dict["request_id"] = id_stop.at("id").AsInt();
         if (const auto stop_from_base = baseBuses.GetInfoStop(id_stop.at("name").AsString())) {
-            Node buses;
+            vector<Node> buses;
+            buses.reserve(stop_from_base->size());
             for (const auto &stop: *stop_from_base) {
-                buses.push_back(stop);
+                buses.emplace_back(stop);
             }
             dict["buses"] = move(buses);
 

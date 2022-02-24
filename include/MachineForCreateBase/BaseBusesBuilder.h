@@ -13,8 +13,7 @@
 
 class BaseBusesBuilder {
 public:
-    BaseBuses BuildBase(const std::vector<Json::Node>&, const std::map<std::string, Json::Node>&,
-            const std::map<std::string, Json::Node>&);
+    BaseBuses BuildBase(const std::map<std::string, Json::Node>&);
 private:
     std::unordered_map<std::string, std::shared_ptr<CommandBuild>> commands;
 
