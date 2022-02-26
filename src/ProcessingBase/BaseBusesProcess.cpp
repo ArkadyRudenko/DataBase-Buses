@@ -13,6 +13,7 @@ Node BaseBusesProcess(BaseBuses &baseBuses, const Node &stat_requests) {
     MapStates mapStates = CreateMapStates();
     vector<Node> results;
     for (const auto &req: stat_requests.AsArray()) {
+
         results.push_back(move(
                 mapStates[req.AsMap().at("type").AsString()]->Listen(baseBuses, req.AsMap())
         ));

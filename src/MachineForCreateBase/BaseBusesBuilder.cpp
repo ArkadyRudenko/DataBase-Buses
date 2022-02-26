@@ -17,6 +17,7 @@ BaseBuses BaseBusesBuilder::BuildBase(const std::map<std::string, Json::Node>& s
     for (const auto &req: GetSortedRequests(settings_json.at("base_requests").AsArray())) {
         commands[req->AsMap().at("type").AsString()]->Execute(baseBuses, req->AsMap());
     }
+
     baseBuses.BuildMap(settings_json.at("render_settings").AsMap());
     baseBuses.BuildRouter(settings_json.at("routing_settings").AsMap());
 

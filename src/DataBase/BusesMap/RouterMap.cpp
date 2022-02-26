@@ -12,6 +12,7 @@
 
 #include "RouterMap.h"
 #include "svg.h"
+#include "Worker.h"
 
 using namespace std;
 
@@ -29,8 +30,9 @@ RouterMap::RouterMap(const StopsDict &stops_dict,
     settings.underlayer_width = settings_.at("underlayer_width").AsDouble();
     settings.color_palette = MakePaletteColor(settings_.at("color_palette"));
     settings.bus_label_font_size = settings_.at("bus_label_font_size").AsInt();
-    settings.bus_label_offset = MakePoint(settings_.at("bus_label_offset").AsArray());
-//    settings.layers = MakeLayers(settings_.at("layers"));
+    settings.bus_label_offset = MakePoint(settings_.at("bus_label_offset"));
+
+    settings.layers = MakeLayers(settings_.at("layers"));
 
     BuildMap(stops_dict, buses_dict);
 }
@@ -91,99 +93,35 @@ void RouterMap::BuildMap(const StopsDict &stops_dict, const BusesDict &buses_dic
             i = 0;
         }
     }
+
     // ------------ RENDER ------------- //
-    Svg::Document map_document;
 
-    for (const auto &bus: buses_colors) {
-        StopsList stopsList = buses_dict.at(bus.first).getListStops();
-        Svg::Polyline polyline;
-        polyline.SetStrokeColor(buses_colors[bus.first])
-                .SetStrokeWidth(settings.line_width)
-                .SetStrokeLineCap("round")
-                .SetStrokeLineJoin("round");
-        for (const auto &stop: stopsList) {
-            polyline.AddPoint(stops_coordinates.at(stop->name));
+    DocumentBuilder documentBuilder({
+                                            .buses_colors = buses_colors,
+                                            .buses_dict = buses_dict,
+                                            .stops_coordinates = stops_coordinates,
+                                            .settings = settings
+                                    });
+
+    for (const auto &layer: settings.layers) {
+        if (layer == "bus_lines") {
+            documentBuilder.SetBusLines();
         }
-        map_document.Add(move(polyline));
-    }
-
-    for (const auto &bus: buses_colors) {
-        StopsList stopsList = buses_dict.at(bus.first).getListStops();
-        vector<Svg::Point> points;
-        if (Route::ANNULAR == buses_dict.at(bus.first).getRoute()) {
-            points.push_back(stops_coordinates.find(stopsList[0]->name)->second);
-        } else {
-            points.push_back(stops_coordinates.find(stopsList[0]->name)->second);
-            if(stopsList[stopsList.size() / 2]->name != stopsList[0]->name) {
-                points.push_back(stops_coordinates.find(stopsList[stopsList.size() / 2]->name)->second);
-            }
+        if (layer == "bus_labels") {
+            documentBuilder.SetBusLabels();
         }
-
-        for(const auto& point : points) {
-
-            map_document.
-                    Add(Svg::Text{}
-                                .SetPoint(point)
-                                .SetOffset(settings.bus_label_offset)
-                                .SetFontSize(settings.bus_label_font_size)
-                                .SetFontFamily("Verdana")
-                                .SetFontWeight("bold")
-                                .SetData(bus.first)
-                                        // additionally
-                                .SetStrokeColor(settings.underlayer_color)
-                                .SetFillColor(settings.underlayer_color)
-                                .SetStrokeWidth(settings.underlayer_width)
-                                .SetStrokeLineCap("round")
-                                .SetStrokeLineJoin("round"));
-            map_document.
-                    Add(Svg::Text{}
-                                .SetPoint(point)
-                                .SetOffset(settings.bus_label_offset)
-                                .SetFontSize(settings.bus_label_font_size)
-                                .SetFontFamily("Verdana")
-                                .SetFontWeight("bold")
-                                .SetData(bus.first)
-                                        // additionally
-                                .SetFillColor(bus.second)
-            );
+        if (layer == "stop_points") {
+            documentBuilder.SetStopPoints();
         }
-    }
-
-    for (const auto &stop: stops_coordinates) {
-        map_document.
-                Add(Svg::Circle{}
-                            .SetCenter(stop.second)
-                            .SetRadius(settings.stop_radius)
-                            .SetFillColor("white")
-        );
-    }
-
-    for (const auto &stop: stops_coordinates) {
-        map_document.
-                Add(Svg::Text{}
-                            .SetPoint(stop.second)
-                            .SetOffset(settings.stop_label_offset)
-                            .SetFontSize(settings.stop_label_font_size)
-                            .SetFontFamily("Verdana")
-                            .SetData(stop.first)
-                            .SetStrokeColor(settings.underlayer_color)
-                            .SetFillColor(settings.underlayer_color)
-                            .SetStrokeWidth(settings.underlayer_width)
-                            .SetStrokeLineCap("round")
-                            .SetStrokeLineJoin("round")
-        );
-        map_document.
-                Add(Svg::Text{}
-                            .SetPoint(stop.second)
-                            .SetOffset(settings.stop_label_offset)
-                            .SetFontSize(settings.stop_label_font_size)
-                            .SetFontFamily("Verdana")
-                            .SetData(stop.first)
-                            .SetFillColor("black"));
-
+        if (layer == "stop_labels") {
+            documentBuilder.SetStopLabels();
+        }
     }
     stringstream ss;
-    map_document.Render(ss);
+    documentBuilder.SetRenderDocument(ss);
+    unique_ptr<Svg::Document> map_document = make_unique<Svg::Document>();
+    documentBuilder.Build()->Run(move(map_document));
+
     for (const char ch: ss.str()) {
         if (ch == '\"' or ch == '\\') {
             result_svg.push_back('\\');
@@ -196,7 +134,7 @@ std::string_view RouterMap::GetSvgDoc() {
 //    string res;
 //    for(char ch : result_svg) {
 //        if(ch != 92) {
-//            res += ch;
+//            res += ch; //
 //        }
 //    }
 //    cout << "\n WORKING VERSION=\n" << res << '\n';
@@ -205,7 +143,7 @@ std::string_view RouterMap::GetSvgDoc() {
 
 std::vector<std::string> MakeLayers(const Json::Node &layers) {
     vector<string> result;
-    for(const auto& node : layers.AsArray()) {
+    for (const auto &node: layers.AsArray()) {
         result.push_back(node.AsString());
     }
     return result;
@@ -243,7 +181,7 @@ Svg::Color MakeRgbColor(const vector<Json::Node> &color) {
 std::vector<Svg::Color> MakePaletteColor(const Json::Node &palette) {
     vector<Svg::Color> result;
     result.reserve(palette.AsArray().size());
-    for (const auto &color : palette.AsArray()) {
+    for (const auto &color: palette.AsArray()) {
         result.push_back(MakeColor(color));
     }
     return result;

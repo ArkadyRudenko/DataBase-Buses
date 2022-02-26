@@ -18,6 +18,11 @@ stringstream LoadTest1() {
         "padding": 50,
         "stop_radius": 5,
         "line_width": 14,
+        "bus_label_font_size": 20,
+        "bus_label_offset": [
+            7,
+            15
+        ],
         "stop_label_font_size": 20,
         "stop_label_offset": [
             7,
@@ -38,6 +43,11 @@ stringstream LoadTest1() {
                 0
             ],
             "red"
+        ],
+        "layers": [
+            "bus_lines",
+            "stop_points",
+            "bus_labels"
         ]
     },
   "base_requests": [

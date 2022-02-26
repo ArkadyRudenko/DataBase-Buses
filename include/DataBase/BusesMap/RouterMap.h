@@ -26,8 +26,6 @@ private:
 private:
     RenderSettings settings;
     std::string result_svg;
-
-
 };
 
 std::vector<std::string> MakeLayers(const Json::Node &node);
