@@ -10,12 +10,11 @@
 #include "Tests.h"
 #include "json.h"
 
-
 using namespace std;
 using namespace Json;
 
 int main() {
-//    TestAll();
+    TestAll();
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
@@ -24,4 +23,5 @@ int main() {
             .BuildBase(requests);
 
     cout << BaseBusesProcess(baseBuses, requests["stat_requests"]) << endl;
+    return 0;
 }

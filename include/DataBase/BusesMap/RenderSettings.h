@@ -16,12 +16,12 @@ struct RenderSettings {
     double padding;
     double stop_radius;
     double line_width;
-    size_t stop_label_font_size = 1;
+    int stop_label_font_size = 1;
     Svg::Point stop_label_offset;
     Svg::Color underlayer_color;
     double underlayer_width;
-    std::vector<Svg::Color> color_palette;
-    size_t bus_label_font_size;
+    std::vector<Svg::Color> palette;
+    int bus_label_font_size;
     Svg::Point bus_label_offset;
     std::vector<std::string> layers;
 };

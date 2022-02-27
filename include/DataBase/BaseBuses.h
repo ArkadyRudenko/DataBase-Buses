@@ -14,7 +14,7 @@
 #include "ItemPath.h"
 #include "TransportRouter.h"
 #include "Router.h"
-#include "RouterMap.h"
+#include "MapRenderer.h"
 
 
 using StopsDict = std::unordered_map<std::string, Stop>;
@@ -33,19 +33,19 @@ public:
 
     std::optional<RouteInfo> GetInfoRoute(const std::string &, const std::string &) const;
 
-    std::string_view GetInfoMap() const;
+    std::string GetInfoMap() const;
 
 private:
-    BusesDict buses;
-    StopsDict name_in_stop;
+    BusesDict buses_dict;
+    StopsDict stops_dict;
     std::unordered_map<std::string, std::set<std::string>> stop_in_buses;
 
     explicit BaseBuses() = default;
     void BuildRouter(const Json::Dict&);
-    void BuildMap(const Json::Dict& render_settings_json);
+    void BuildMap(const Json::Node& render_settings_json);
 
     std::unique_ptr<TransportRouter> router_;
-    std::unique_ptr<RouterMap> router_map_;
+    Svg::Document map_;
 
     friend class BaseBusesBuilder;
 };
