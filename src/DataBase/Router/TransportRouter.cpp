@@ -26,7 +26,7 @@ void TransportRouter::BuildGraph(const StopsDict &stops_dict,
                  j != i;
                  j = (j + 1) % (stops.size() - 1)) {
 
-                const unordered_map<std::string, int> &next_stops = stops[
+                const auto& next_stops = stops[
                         (j - 1) == -1 ? stops.size() - 2 : j - 1
                 ]->getLengths();
 
